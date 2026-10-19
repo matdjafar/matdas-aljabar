@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Dashboard & Box Monitor - MathQuest Pro</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-dark': '#0f766e',  // Teal-700
+                        'brand-main': '#14b8a6',  // Teal-500
+                        'brand-light': '#f0fdfa', // Teal-50
+                        'brand-gold': '#fbbf24',  // Amber-400
+                        'rank-1': '#fbbf24',      // Gold
+                        'rank-2': '#94a3b8',      // Silver
+                        'rank-3': '#b45309',      // Bronze
+                    },
+                    fontFamily: {
+                        'sans': ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: #f0fdfa; 
+            background-image: 
+                radial-gradient(circle at top right, #ccfbf1 0%, transparent 40%),
+                radial-gradient(circle at bottom left, #99f6e4 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(15, 118, 110, 0.15), 0 10px 15px -3px rgba(15, 118, 110, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        
+        @keyframes pulse-glow { 
+            0%, 100% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); } 
+            50% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.8); } 
+        }
+        .rank-1-card { animation: pulse-glow 2s infinite; border: 2px solid #fbbf24; }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col items-center py-6 px-4 md:py-8">
+
+    <header class="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-between gap-4 mb-6 z-10">
+        <div class="flex items-center gap-4">
+            <!-- FRAME LOGO KOTAK SUPAYA LOGO TIDAK TERPOTONG -->
+            <div class="bg-white p-2 rounded-2xl shadow-lg border-2 border-teal-100 w-16 h-16 md:w-20 md:h-20 flex items-center justify-center flex-shrink-0">
+                <img src="https://iili.io/CNu9Bt9.png" alt="Logo Al-Ishlah" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/64x64/0f766e/ffffff?text=AI'">
+            </div>
+            <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h1 class="text-2xl md:text-4xl font-black text-brand-dark tracking-tight uppercase drop-shadow-sm">Live Arena & Hall of Fame</h1>
+                    <span class="bg-brand-gold text-amber-950 text-xs font-black px-2.5 py-1 rounded-lg uppercase">60 Box Edition</span>
+                </div>
+                <p class="text-xs md:text-base font-bold text-teal-600">MathQuest Pro • TP 11, 12 & 13 (Ekspresi Aljabar) • SMA IT Al-Ishlah Gorontalo</p>
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-3 bg-white px-4 py-3 rounded-2xl shadow-md border border-slate-100">
+            <!-- Tab Switcher Proyektor -->
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-btn-both" onclick="switchViewMode('both')" class="px-3 py-1.5 rounded-lg font-extrabold text-xs bg-brand-dark text-white shadow-sm transition">Layar Penuh (Split)</button>
+                <button id="tab-btn-lb" onclick="switchViewMode('lb')" class="px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-600 hover:text-brand-dark transition">Peringkat</button>
+                <button id="tab-btn-box" onclick="switchViewMode('box')" class="px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-600 hover:text-brand-dark transition">Status 60 Box</button>
+            </div>
+
+            <div class="text-right border-l pl-3 border-slate-200">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Update Terakhir</p>
+                <p id="last-update" class="text-xs font-extrabold text-brand-main">Memuat...</p>
+            </div>
+            <button id="btn-refresh" onclick="fetchAllDashboardData()" class="bg-brand-main hover:bg-brand-dark text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition active:scale-95" title="Segarkan Sekarang">
+                <i class="fas fa-sync-alt" id="refresh-icon"></i>
+            </button>
+            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-white px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition">
+                <i class="fas fa-gamepad"></i> Arena Siswa
+            </a>
+        </div>
+    </header>
+
+    <main id="dashboard-grid" class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 z-10">
+        
+        <!-- PANEL KIRI: LIVE MONITOR STATUS 60 BOX -->
+        <section id="panel-boxes" class="lg:col-span-6 glass-panel p-5 md:p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div>
+                    <h2 class="text-lg md:text-xl font-black text-brand-dark uppercase flex items-center gap-2">
+                        <i class="fas fa-boxes-stacked text-brand-main"></i> Peta Penguasaan 60 Box
+                    </h2>
+                    <p class="text-xs font-bold text-slate-400">Box 1-20 (TP 11) • Box 21-40 (TP 12) • Box 41-60 (TP 13)</p>
+                </div>
+                <button onclick="resetAllBoxesPrompt()" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-2.5 py-1.5 rounded-lg font-extrabold transition" title="Reset Semua Box untuk Sesi Baru">
+                    <i class="fas fa-rotate"></i> Reset Box
+                </button>
+            </div>
+
+            <!-- Ringkasan Angka Box -->
+            <div class="grid grid-cols-3 gap-2.5 mb-4 text-center">
+                <div class="bg-teal-50 border border-teal-200 rounded-xl p-2">
+                    <span class="block text-[10px] font-extrabold uppercase text-teal-700">Tersedia</span>
+                    <span id="stat-box-open" class="text-xl font-black text-brand-dark">60</span>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-2">
+                    <span class="block text-[10px] font-extrabold uppercase text-amber-700">Sedang Dibuka</span>
+                    <span id="stat-box-locked" class="text-xl font-black text-amber-600">0</span>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2">
+                    <span class="block text-[10px] font-extrabold uppercase text-emerald-700">Terpecahkan</span>
+                    <span id="stat-box-solved" class="text-xl font-black text-emerald-600">0</span>
+                </div>
+            </div>
+
+            <!-- Matriks 60 Box -->
+            <div id="live-box-matrix" class="grid grid-cols-4 sm:grid-cols-6 gap-2 flex-grow max-h-[560px] overflow-y-auto pr-1">
+                <!-- Diisi via JS -->
+            </div>
+        </section>
+
+        <!-- PANEL KANAN: HALL OF FAME LEADERBOARD -->
+        <section id="panel-leaderboard" class="lg:col-span-6 glass-panel p-5 md:p-6 flex flex-col min-h-[480px]">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div>
+                    <h2 class="text-lg md:text-xl font-black text-brand-dark uppercase flex items-center gap-2">
+                        <i class="fas fa-crown text-brand-gold"></i> Klasemen Pahlawan
+                    </h2>
+                    <p class="text-xs font-bold text-slate-400">Diurutkan berdasarkan Skor Tertinggi & Kecepatan Waktu</p>
+                </div>
+                <span class="bg-teal-50 text-brand-dark text-xs font-black px-3 py-1 rounded-full border border-teal-200">
+                    Auto-Refresh: 10 dtk
+                </span>
+            </div>
+
+            <!-- Header Kolom -->
+            <div class="grid grid-cols-12 gap-2 mb-3 pb-2 border-b border-slate-100 text-xs font-black text-slate-400 uppercase tracking-wider hidden sm:grid">
+                <div class="col-span-2 text-center">Rank</div>
+                <div class="col-span-6">Nama Pahlawan</div>
+                <div class="col-span-4 text-right">Skor & Waktu</div>
+            </div>
+
+            <!-- State Loading -->
+            <div id="loading-state" class="flex flex-col items-center justify-center flex-grow py-16 text-brand-main gap-3">
+                <i class="fas fa-circle-notch fa-spin text-4xl"></i>
+                <p class="font-bold text-sm animate-pulse">Menarik data real-time dari Google Spreadsheet...</p>
+            </div>
+
+            <!-- State Error -->
+            <div id="error-state" class="hidden flex-col items-center justify-center flex-grow py-12 text-red-500 gap-3 text-center">
+                <div class="bg-red-50 p-4 rounded-full">
+                    <i class="fas fa-exclamation-triangle text-3xl"></i>
+                </div>
+                <p class="font-bold text-base text-slate-700">Gagal memuat dari Google Spreadsheet.</p>
+                <p class="text-xs text-slate-500" id="error-message">Pastikan Web App GAS sudah di-deploy dengan akses Anyone.</p>
+                <button onclick="fetchAllDashboardData()" class="bg-slate-800 text-white px-5 py-2 rounded-xl font-bold text-xs hover:bg-slate-700 transition">Coba Lagi</button>
+            </div>
+
+            <!-- State Kosong -->
+            <div id="empty-state" class="hidden flex-col items-center justify-center flex-grow py-16 text-slate-400 gap-3">
+                <i class="fas fa-box-open text-5xl opacity-40"></i>
+                <p class="font-bold text-sm text-slate-500">Belum ada pahlawan yang membuka box.</p>
+            </div>
+
+            <!-- List Peringkat -->
+            <div id="data-list" class="w-full hidden flex-col gap-2.5 overflow-y-auto max-h-[600px] pr-1"></div>
+        </section>
+
+    </main>
+
+    <!-- Modal Konfirmasi Reset Box (Tanpa alert/confirm bawaan browser) -->
+    <div id="reset-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
+            <div class="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 inline-flex items-center justify-center text-2xl mb-3">
+                <i class="fas fa-rotate"></i>
+            </div>
+            <h3 class="text-lg font-black text-slate-800 mb-1">Reset Status 60 Box?</h3>
+            <p class="text-xs font-semibold text-slate-500 mb-5">Semua 60 box akan kembali berstatus Tersedia (Open) untuk sesi kelas berikutnya.</p>
+            <div class="flex gap-2.5">
+                <button onclick="closeResetModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 font-bold text-xs text-slate-600 hover:bg-slate-200">Batal</button>
+                <button onclick="executeResetBoxes()" class="flex-1 py-2.5 rounded-xl bg-rose-600 font-extrabold text-xs text-white hover:bg-rose-700">Ya, Reset Box</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL Google Apps Script Web App
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbz2dRO8BHsxuWncwpPQIGNiWtb4I6C_6gWK5rVeU0pXysESIvbK600cmfcwtqsbXXOCXg/exec";
+        const TOTAL_BOXES = 60;
+
+        const dom = {
+            loading: document.getElementById('loading-state'),
+            error: document.getElementById('error-state'),
+            empty: document.getElementById('empty-state'),
+            list: document.getElementById('data-list'),
+            refreshIcon: document.getElementById('refresh-icon'),
+            lastUpdate: document.getElementById('last-update'),
+            errMsg: document.getElementById('error-message'),
+            matrix: document.getElementById('live-box-matrix')
+        };
+
+        function formatTime(totalSeconds) {
+            if (!totalSeconds || isNaN(totalSeconds)) return "00m 00s";
+            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+            return `${m}m ${s}s`;
+        }
+
+        function formatName(fullName) {
+            if (!fullName) return "Pahlawan Tanpa Nama";
+            const words = fullName.toString().trim().split(/\s+/);
+            if (words.length > 2) {
+                return words.slice(0, 2).join(' ') + ' ' + words.slice(2).map(w => w.charAt(0) + '.').join('');
+            }
+            return fullName;
+        }
+
+        function shortBoxOwner(fullName) {
+            if (!fullName) return "-";
+            const words = fullName.toString().trim().split(/\s+/);
+            return words.length > 1 ? `${words[0]} ${words[1][0]}.` : words[0];
+        }
+
+        function switchViewMode(mode) {
+            const pBox = document.getElementById('panel-boxes');
+            const pLb = document.getElementById('panel-leaderboard');
+            const bBoth = document.getElementById('tab-btn-both');
+            const bLb = document.getElementById('tab-btn-lb');
+            const bBox = document.getElementById('tab-btn-box');
+
+            [bBoth, bLb, bBox].forEach(b => b.className = "px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-600 hover:text-brand-dark transition");
+
+            if (mode === 'both') {
+                bBoth.className = "px-3 py-1.5 rounded-lg font-extrabold text-xs bg-brand-dark text-white shadow-sm transition";
+                pBox.classList.remove('hidden');
+                pLb.classList.remove('hidden');
+                pBox.className = "lg:col-span-6 glass-panel p-5 md:p-6 flex flex-col";
+                pLb.className = "lg:col-span-6 glass-panel p-5 md:p-6 flex flex-col min-h-[480px]";
+            } else if (mode === 'lb') {
+                bLb.className = "px-3 py-1.5 rounded-lg font-extrabold text-xs bg-brand-dark text-white shadow-sm transition";
+                pBox.classList.add('hidden');
+                pLb.classList.remove('hidden');
+                pLb.className = "lg:col-span-12 glass-panel p-5 md:p-8 flex flex-col min-h-[480px]";
+            } else if (mode === 'box') {
+                bBox.className = "px-3 py-1.5 rounded-lg font-extrabold text-xs bg-brand-dark text-white shadow-sm transition";
+                pLb.classList.add('hidden');
+                pBox.classList.remove('hidden');
+                pBox.className = "lg:col-span-12 glass-panel p-5 md:p-8 flex flex-col";
+            }
+        }
+
+        function renderBoxMatrix(boxesData = []) {
+            const map = {};
+            boxesData.forEach(b => { map[Number(b.boxId)] = b; });
+
+            dom.matrix.innerHTML = '';
+            let openC = 0, lockedC = 0, solvedC = 0;
+
+            for (let i = 1; i <= TOTAL_BOXES; i++) {
+                const item = map[i] || { boxId: i, status: 'OPEN', owner: '', lastTriedBy: '' };
+                let boxClass = "bg-white border-2 border-teal-200 text-slate-700";
+                let badge = `<span class="text-[9px] font-bold text-teal-600">Tersedia</span>`;
+
+                if (item.status === 'SOLVED') {
+                    solvedC++;
+                    boxClass = "bg-emerald-50 border-2 border-emerald-400 text-emerald-900 shadow-sm";
+                    badge = `<span class="text-[10px] font-black text-emerald-700 truncate block w-full">${shortBoxOwner(item.owner)}</span>`;
+                } else if (item.status === 'LOCKED') {
+                    lockedC++;
+                    boxClass = "bg-amber-50 border-2 border-amber-400 text-amber-900 animate-pulse";
+                    badge = `<span class="text-[10px] font-black text-amber-700 truncate block w-full">⏳ ${shortBoxOwner(item.owner)}</span>`;
+                } else {
+                    openC++;
+                    if (item.lastTriedBy) {
+                        badge = `<span class="text-[9px] font-bold text-rose-500 truncate block w-full">🔄 Terbuka</span>`;
+                    }
+                }
+
+                const cell = document.createElement('div');
+                cell.className = `rounded-xl p-1.5 flex flex-col items-center justify-center text-center min-h-[58px] ${boxClass}`;
+                cell.innerHTML = `
+                    <span class="text-[11px] font-black">#${i}</span>
+                    ${badge}
+                `;
+                dom.matrix.appendChild(cell);
+            }
+
+            document.getElementById('stat-box-open').textContent = openC;
+            document.getElementById('stat-box-locked').textContent = lockedC;
+            document.getElementById('stat-box-solved').textContent = solvedC;
+        }
+
+        async function fetchAllDashboardData() {
+            dom.refreshIcon.classList.add('fa-spin');
+            dom.lastUpdate.textContent = "Memperbarui...";
+
+            try {
+                const response = await fetch(`${GAS_URL}?action=getDashboard&t=${Date.now()}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const payload = await response.json();
+
+                dom.refreshIcon.classList.remove('fa-spin');
+                const now = new Date();
+                dom.lastUpdate.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+                // Dukungan format array langsung (kompatibilitas lama) maupun objek { leaderboard, boxes }
+                if (Array.isArray(payload)) {
+                    renderLeaderboard(payload);
+                    renderBoxMatrix([]);
+                } else {
+                    renderLeaderboard(payload.leaderboard || []);
+                    renderBoxMatrix(payload.boxes || []);
+                }
+            } catch (error) {
+                dom.refreshIcon.classList.remove('fa-spin');
+                dom.lastUpdate.textContent = "Gagal memuat";
+                dom.errMsg.textContent = error.message;
+                dom.loading.classList.add('hidden');
+                dom.error.classList.remove('hidden');
+                dom.error.classList.add('flex');
+            }
+        }
+
+        function renderLeaderboard(data) {
+            dom.loading.classList.add('hidden');
+            dom.error.classList.add('hidden');
+            dom.empty.classList.add('hidden');
+            dom.list.classList.add('hidden');
+            dom.list.innerHTML = '';
+
+            if (!Array.isArray(data) || data.length === 0) {
+                dom.empty.classList.remove('hidden');
+                dom.empty.classList.add('flex');
+                return;
+            }
+
+            dom.list.classList.remove('hidden');
+            dom.list.classList.add('flex');
+
+            data.forEach((row, index) => {
+                const rank = index + 1;
+                const nama = formatName(row.nama);
+                const skor = row.skor || 0;
+                const waktu = formatTime(row.waktuPengerjaan);
+                const boxesInfo = row.boxesSolved !== undefined ? `${row.boxesSolved}/5 Box` : '';
+
+                let cardClass = "bg-white border border-slate-100 shadow-sm";
+                let rankVisual = `<span class="text-lg font-black text-slate-400">#${rank}</span>`;
+
+                if (rank === 1) {
+                    cardClass = "bg-gradient-to-r from-amber-50 to-white rank-1-card shadow-md";
+                    rankVisual = `<i class="fas fa-crown text-2xl text-brand-gold"></i>`;
+                } else if (rank === 2) {
+                    cardClass = "bg-slate-50 border-2 border-slate-200";
+                    rankVisual = `<i class="fas fa-medal text-2xl text-rank-2"></i>`;
+                } else if (rank === 3) {
+                    cardClass = "bg-orange-50 border-2 border-orange-200";
+                    rankVisual = `<i class="fas fa-medal text-2xl text-rank-3"></i>`;
+                }
+
+                const item = document.createElement('div');
+                item.className = `grid grid-cols-12 gap-2 items-center p-3.5 rounded-2xl ${cardClass} animate-fade-in`;
+                item.innerHTML = `
+                    <div class="col-span-2 flex justify-center items-center">${rankVisual}</div>
+                    <div class="col-span-6 truncate">
+                        <p class="font-black text-sm md:text-base text-slate-800 truncate">${nama}</p>
+                        ${boxesInfo ? `<span class="text-[10px] font-extrabold text-teal-600 uppercase">${boxesInfo}</span>` : ''}
+                    </div>
+                    <div class="col-span-4 flex items-center justify-end gap-4 text-right">
+                        <div>
+                            <span class="block text-[9px] font-bold text-slate-400 uppercase">Skor</span>
+                            <span class="font-black text-lg md:text-2xl text-brand-dark leading-none">${skor}</span>
+                        </div>
+                        <div class="border-l pl-3 border-slate-200">
+                            <span class="block text-[9px] font-bold text-slate-400 uppercase">Waktu</span>
+                            <span class="font-bold text-xs md:text-sm text-slate-600 font-mono">${waktu}</span>
+                        </div>
+                    </div>
+                `;
+                dom.list.appendChild(item);
+            });
+        }
+
+        function resetAllBoxesPrompt() {
+            document.getElementById('reset-modal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-modal').classList.add('hidden');
+        }
+
+        async function executeResetBoxes() {
+            closeResetModal();
+            try {
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'resetBoxes' })
+                });
+                fetchAllDashboardData();
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBoxMatrix([]);
+            fetchAllDashboardData();
+            setInterval(fetchAllDashboardData, 10000);
+        });
+    </script>
+</body>
+</html>

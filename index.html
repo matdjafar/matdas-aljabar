@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MathQuest Pro: Open The Box - SMA IT Al-Ishlah</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)']] },
+            startup: { typeset: false }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-dark': '#0f766e',  // Teal-700
+                        'brand-main': '#14b8a6',  // Teal-500
+                        'brand-light': '#ccfbf1', // Teal-100
+                        'brand-bg': '#f0fdfa',    // Teal-50
+                        'brand-gold': '#fbbf24',  // Amber-400
+                        'brand-accent': '#f43f5e',// Rose-500
+                    },
+                    fontFamily: {
+                        'sans': ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: #f0fdfa; 
+            background-image: 
+                radial-gradient(#14b8a6 0.65px, transparent 0.65px), 
+                radial-gradient(#0f766e 0.65px, #f0fdfa 0.65px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            background-attachment: fixed;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(15, 118, 110, 0.12), 0 8px 10px -6px rgba(15, 118, 110, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.85);
+        }
+
+        .btn-3d {
+            transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 #0f766e;
+            transform: translateY(0);
+        }
+        .btn-3d:active:not(:disabled) {
+            box-shadow: 0 0px 0 #0f766e;
+            transform: translateY(6px);
+        }
+        .btn-3d:disabled {
+            box-shadow: 0 6px 0 #94a3b8;
+            opacity: 0.65; 
+            cursor: not-allowed;
+        }
+
+        .btn-3d-gold {
+            transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 #b45309;
+            transform: translateY(0);
+        }
+        .btn-3d-gold:active:not(:disabled) {
+            box-shadow: 0 0px 0 #b45309;
+            transform: translateY(6px);
+        }
+
+        /* Animations */
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.92); } 100% { opacity: 1; transform: scale(1); } }
+        .animate-pop-in { animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+        .animate-shake { animation: shake 0.45s ease-in-out; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+        .logo-float { animation: float 3s ease-in-out infinite; }
+
+        /* Mystery Box Styling */
+        .mystery-box {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .mystery-box.box-open {
+            background: linear-gradient(145deg, #ffffff, #f0fdfa);
+            border: 3px solid #14b8a6;
+            box-shadow: 0 6px 0 #0f766e, 0 10px 15px -3px rgba(15, 118, 110, 0.15);
+            cursor: pointer;
+        }
+        .mystery-box.box-open:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 0 #0f766e, 0 15px 20px -3px rgba(15, 118, 110, 0.25);
+            border-color: #0d9488;
+        }
+        .mystery-box.box-open:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0f766e;
+        }
+        .mystery-box.box-locked {
+            background: linear-gradient(145deg, #fffbeb, #fef3c7);
+            border: 3px solid #f59e0b;
+            box-shadow: 0 5px 0 #b45309;
+            cursor: not-allowed;
+        }
+        .mystery-box.box-solved {
+            background: linear-gradient(145deg, #ecfdf5, #d1fae5);
+            border: 3px solid #10b981;
+            box-shadow: 0 4px 0 #047857;
+            cursor: not-allowed;
+            opacity: 0.92;
+        }
+        .mystery-box.box-mine {
+            background: linear-gradient(145deg, #fef3c7, #fde68a);
+            border: 3px solid #eab308;
+            box-shadow: 0 4px 0 #a16207;
+            cursor: not-allowed;
+        }
+
+        /* Custom Interactive Elements */
+        .option-card {
+            border: 3px solid #e2e8f0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .option-card:hover { border-color: #5eead4; background-color: #f0fdfa; transform: translateY(-2px); }
+        .option-card.selected { border-color: #14b8a6; background-color: #ccfbf1; box-shadow: 0 6px 15px rgba(20, 184, 166, 0.2); }
+
+        .math-input-box input {
+            width: 82px; height: 54px; text-align: center; font-size: 1.35rem; font-weight: 800;
+            border: 3px solid #cbd5e1; border-radius: 0.75rem; outline: none; transition: all 0.2s;
+        }
+        .math-input-box input:focus { border-color: #14b8a6; box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2); }
+
+        .match-item { border: 2px solid #cbd5e1; transition: all 0.2s; cursor: pointer; user-select: none; }
+        .match-item:hover:not(.solved) { border-color: #14b8a6; background-color: #f8fafc; }
+        .match-item.active { border-color: #f59e0b; background-color: #fef3c7; transform: scale(1.03); z-index: 10; box-shadow: 0 8px 15px -3px rgba(245, 158, 11, 0.25); }
+        .match-item.solved { border-color: #10b981; background-color: #d1fae5; color: #065f46; opacity: 0.75; pointer-events: none; transform: scale(0.97); }
+
+        .slot-target { border: 2px dashed #94a3b8; min-height: 64px; min-width: 85px; display: flex; align-items: center; justify-content: center; border-radius: 0.85rem; background: #f8fafc; transition: all 0.2s; padding: 0.25rem; }
+        .slot-item { cursor: pointer; transition: all 0.2s; border: 2px solid #cbd5e1; background: white; user-select: none; }
+        .slot-item:hover { border-color: #14b8a6; transform: translateY(-2px); }
+
+        .hidden { display: none !important; }
+        .modal-overlay { background: rgba(15, 23, 42, 0.78); backdrop-filter: blur(5px); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <header class="bg-brand-dark text-white p-3 shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto flex flex-wrap justify-between items-center max-w-6xl gap-3">
+            <div class="flex items-center gap-3">
+                <!-- FRAME LOGO KOTAK AGAR TIDAK TERPOTONG -->
+                <div class="bg-white p-1.5 rounded-xl shadow-md logo-float flex-shrink-0 border-2 border-teal-200 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
+                    <img src="https://iili.io/CNu9Bt9.png" alt="Logo Al-Ishlah" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/56x56/0f766e/ffffff?text=AI'">
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h1 class="text-base md:text-xl font-black tracking-tight">MathQuest PRO</h1>
+                        <span class="bg-brand-gold text-amber-950 text-[10px] font-black px-2 py-0.5 rounded-md uppercase shadow-sm">Open The Box</span>
+                    </div>
+                    <p id="header-tp-subtitle" class="text-[11px] md:text-xs text-brand-light opacity-95 font-semibold">TP 11, 12 & 13 • SMA IT Al-Ishlah Gorontalo</p>
+                </div>
+            </div>
+            
+            <!-- Status Pemain & Link Dashboard -->
+            <div class="flex items-center gap-2 md:gap-3">
+                <a href="dashboard.html" target="_blank" class="bg-teal-800/90 hover:bg-teal-900 text-teal-100 border border-teal-500/40 px-3 py-1.5 rounded-xl font-bold text-xs md:text-sm flex items-center gap-2 transition shadow-sm">
+                    <i class="fas fa-tv text-brand-gold"></i>
+                    <span class="hidden sm:inline">Live Dashboard</span>
+                </a>
+
+                <div id="header-info" class="hidden flex items-center gap-2">
+                    <div class="bg-slate-900/40 px-3 py-1.5 rounded-xl flex items-center gap-1.5 border border-white/10" title="Kuota Box Pilihanmu">
+                        <i class="fas fa-box-open text-teal-300 text-xs"></i>
+                        <span id="quota-display" class="font-extrabold text-xs md:text-sm">0 / 5 Box</span>
+                    </div>
+                    <div class="bg-amber-400 text-amber-950 px-3 py-1.5 rounded-xl flex items-center gap-1.5 font-black shadow-sm">
+                        <i class="fas fa-star text-amber-700"></i> 
+                        <span id="score-display" class="text-xs md:text-sm">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto p-4 md:p-6 flex items-center justify-center relative max-w-6xl">
+        
+        <!-- 1. LAYAR LOGIN SISWA -->
+        <section id="login-screen" class="glass-panel w-full max-w-lg p-6 md:p-8 animate-pop-in">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-brand-light text-brand-dark rounded-2xl mb-3 shadow-inner border-2 border-teal-200">
+                    <i class="fas fa-boxes-stacked text-4xl"></i>
+                </div>
+                <span class="block text-xs font-black uppercase tracking-widest text-teal-600 mb-1">Mode Kompetisi Real-Time</span>
+                <h2 class="text-2xl md:text-3xl font-black text-brand-dark mb-1 uppercase tracking-tight">Misi Open The Box</h2>
+                <p class="text-slate-600 font-semibold text-xs md:text-sm">Pilih 5 Kotak Misteri, taklukkan tantangannya sebelum waktu habis, dan ukir namamu di setiap kotak!</p>
+            </div>
+
+            <!-- Pilihan Nama Siswa & Ringkasan Materi TP 11, 12, 13 (Bentuk Aljabar) -->
+            <div class="bg-teal-50/90 border-2 border-teal-100 rounded-2xl p-4 mb-5 text-xs text-teal-900">
+                <p class="font-black uppercase tracking-wider text-teal-700 mb-2 flex items-center gap-1.5">
+                    <i class="fas fa-bullseye text-brand-main"></i> Fokus Tujuan Pembelajaran (60 Box Soal):
+                </p>
+                <ul class="space-y-1.5 font-semibold text-slate-700">
+                    <li class="flex items-start gap-2">
+                        <span class="bg-brand-dark text-white text-[10px] font-black px-2 py-0.5 rounded mt-0.5 flex-shrink-0">TP 11</span>
+                        <span>Mengidentifikasi <strong>variabel, koefisien, konstanta, suku</strong>, serta membedakan <strong>suku sejenis & tidak sejenis</strong> (Box 1–20).</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="bg-brand-dark text-white text-[10px] font-black px-2 py-0.5 rounded mt-0.5 flex-shrink-0">TP 12</span>
+                        <span><strong>Menjumlahkan dan mengurangkan</strong> ekspresi aljabar dengan mengelompokkan suku sejenis (Box 21–40).</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="bg-brand-dark text-white text-[10px] font-black px-2 py-0.5 rounded mt-0.5 flex-shrink-0">TP 13</span>
+                        <span><strong>Mengalikan ekspresi aljabar</strong> (monomial × monomial & monomial × binomial) dengan sifat distributif (Box 41–60).</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Pilihan Nama Siswa -->
+            <div class="mb-5">
+                <label for="student-select" class="block text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Pilih Identitas Pahlawan:</label>
+                <div class="relative">
+                    <i class="fas fa-user-graduate absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-main text-lg"></i>
+                    <select id="student-select" class="w-full pl-12 pr-10 py-3.5 border-2 border-slate-200 rounded-xl focus:ring-4 focus:ring-brand-light focus:border-brand-main outline-none bg-white text-slate-700 font-extrabold text-base appearance-none transition-all cursor-pointer">
+                        <option value="" disabled selected>-- Ketuk untuk Pilih Nama --</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Aturan Open The Box -->
+            <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200 mb-6 text-xs text-amber-900 space-y-1.5">
+                <div class="font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                    <i class="fas fa-scroll text-amber-600"></i> Aturan Arena Open The Box:
+                </div>
+                <p>1. Setiap siswa memilih <strong>5 Box</strong> soal dari papan arena.</p>
+                <p>2. Box yang berhasil dijawab <strong>BENAR</strong> akan dikunci permanen atas namamu dan tidak bisa dipilih siswa lain.</p>
+                <p>3. Box yang dijawab <strong>SALAH</strong> atau habis waktu <em>countdown</em>-nya akan <strong>terbuka kembali</strong> dan masih bisa dijawab oleh siswa lain!</p>
+            </div>
+
+            <button id="btn-start" class="w-full bg-brand-main hover:bg-teal-600 text-white py-4 rounded-xl font-black text-lg uppercase tracking-wider btn-3d disabled:bg-slate-300 disabled:text-slate-500" disabled>
+                Masuk ke Arena Box <i class="fas fa-door-open ml-2"></i>
+            </button>
+        </section>
+
+        <!-- 2. LAYAR ARENA OPEN THE BOX -->
+        <section id="arena-screen" class="w-full hidden flex-col gap-5 animate-pop-in">
+            
+            <!-- Top Bar Status Siswa & Filter Box -->
+            <div class="glass-panel p-4 md:p-5 flex flex-col lg:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start">
+                    <div>
+                        <span class="text-[11px] font-black uppercase tracking-wider text-slate-400 block">Pahlawan Bertugas</span>
+                        <h2 id="arena-player-name" class="text-base md:text-lg font-black text-brand-dark truncate max-w-[240px] sm:max-w-xs">-</h2>
+                    </div>
+                    <!-- Indikator 5 Slot Box Siswa -->
+                    <div class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl border border-slate-200" id="my-box-slots" title="5 Kuota Pilihan Box Kamu">
+                        <!-- Diisi via JS -->
+                    </div>
+                </div>
+
+                <!-- Legenda & Tombol Sinkronisasi -->
+                <div class="flex flex-wrap items-center justify-center gap-2 md:gap-3 text-xs font-extrabold">
+                    <span class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-lg border border-teal-200 text-teal-800">
+                        <span class="w-3 h-3 rounded-sm bg-teal-500 inline-block"></span> Tersedia (<span id="count-open">0</span>)
+                    </span>
+                    <span class="flex items-center gap-1.5 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-200 text-amber-800">
+                        <span class="w-3 h-3 rounded-sm bg-amber-500 inline-block"></span> Sedang Dibuka (<span id="count-locked">0</span>)
+                    </span>
+                    <span class="flex items-center gap-1.5 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200 text-emerald-800">
+                        <span class="w-3 h-3 rounded-sm bg-emerald-500 inline-block"></span> Terpecahkan (<span id="count-solved">0</span>)
+                    </span>
+                    <button onclick="syncArenaBoxes(true)" class="bg-brand-dark hover:bg-teal-800 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition active:scale-95">
+                        <i class="fas fa-sync-alt" id="sync-icon"></i> Segarkan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Kategori TP -->
+            <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+                <div class="flex flex-wrap gap-2" id="tp-filter-tabs">
+                    <button onclick="setFilterTP('ALL')" class="tp-tab bg-brand-dark text-white px-3.5 py-1.5 rounded-xl font-extrabold text-xs shadow-sm transition" data-tp="ALL">Semua Box (60)</button>
+                    <button onclick="setFilterTP('TP11')" class="tp-tab bg-white text-slate-600 hover:bg-teal-50 px-3.5 py-1.5 rounded-xl font-extrabold text-xs border border-slate-200 transition" data-tp="TP11" id="tab-tp1">TP 11: Unsur & Suku (Box 1-20)</button>
+                    <button onclick="setFilterTP('TP12')" class="tp-tab bg-white text-slate-600 hover:bg-teal-50 px-3.5 py-1.5 rounded-xl font-extrabold text-xs border border-slate-200 transition" data-tp="TP12" id="tab-tp2">TP 12: Tambah & Kurang (Box 21-40)</button>
+                    <button onclick="setFilterTP('TP13')" class="tp-tab bg-white text-slate-600 hover:bg-teal-50 px-3.5 py-1.5 rounded-xl font-extrabold text-xs border border-slate-200 transition" data-tp="TP13" id="tab-tp3">TP 13: Perkalian Distributif (Box 41-60)</button>
+                </div>
+                <div class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span id="sync-status-label">Terhubung ke Google Spreadsheet</span>
+                </div>
+            </div>
+
+            <!-- Grid Kotak Open The Box (60 Box) -->
+            <div class="glass-panel p-5 md:p-6">
+                <div id="boxes-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3.5 md:gap-4">
+                    <!-- Kotak 1 - 60 di-render secara dinamis -->
+                </div>
+            </div>
+
+            <!-- Tombol Selesaikan Lebih Awal jika sudah memilih 5 box -->
+            <div class="flex justify-center">
+                <button id="btn-finish-early" onclick="showFinalResultScreen()" class="hidden bg-brand-gold text-amber-950 px-8 py-3.5 rounded-xl font-black text-base uppercase tracking-wider btn-3d-gold">
+                    Lihat Hasil Akhir Misi <i class="fas fa-flag-checkered ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. MODAL SOAL SAAT BOX DIBUKA -->
+        <div id="question-modal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-3 md:p-5 overflow-y-auto">
+            <div class="glass-panel w-full max-w-3xl p-5 md:p-8 animate-pop-in relative my-auto max-h-[94vh] flex flex-col">
+                
+                <!-- Header Modal Box & Countdown -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b-2 border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div id="modal-box-badge" class="w-12 h-12 rounded-2xl bg-brand-dark text-white flex flex-col items-center justify-center font-black shadow-md">
+                            <span class="text-[9px] uppercase tracking-widest text-teal-200">BOX</span>
+                            <span id="modal-box-number" class="text-lg leading-none">#1</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span id="q-category-badge" class="bg-brand-main text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">TP 11</span>
+                                <span id="q-type-badge" class="bg-slate-100 text-slate-600 border border-slate-200 text-[11px] font-extrabold px-2 py-0.5 rounded-md uppercase">Pilihan Ganda</span>
+                            </div>
+                            <p class="text-xs font-bold text-slate-400 mt-1">Poin Box: <strong class="text-amber-600">+<span id="q-points">20</span> ⭐</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Countdown Timer Spesifik Box -->
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Waktu Countdown Box</span>
+                        <div id="box-timer-pill" class="bg-teal-50 border-2 border-teal-200 text-brand-dark px-4 py-1.5 rounded-xl font-black text-xl font-mono flex items-center gap-2 shadow-inner">
+                            <i class="fas fa-hourglass-half text-brand-main animate-spin" style="animation-duration: 3s;"></i>
+                            <span id="box-countdown-text">01:30</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar Waktu Box -->
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-5">
+                    <div id="box-timer-bar" class="bg-brand-main h-full transition-all duration-1000" style="width: 100%;"></div>
+                </div>
+
+                <!-- Isi Pertanyaan -->
+                <div class="overflow-y-auto pr-1 flex-grow">
+                    <div id="question-text" class="text-base md:text-xl font-bold text-slate-800 leading-relaxed mb-5 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80">
+                        Memuat soal...
+                    </div>
+
+                    <!-- AREA INTERAKSI DINAMIS -->
+                    <div id="interaction-area" class="flex flex-col justify-center py-2">
+                        <!-- A. Pilihan Ganda -->
+                        <div id="ui-mcq" class="hidden grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
+
+                        <!-- B. Menjodohkan -->
+                        <div id="ui-match" class="hidden w-full flex flex-col gap-4">
+                            <p class="text-center text-xs font-bold text-teal-800 bg-teal-50 py-2 px-3 rounded-xl border border-teal-200">
+                                <i class="fas fa-hand-pointer text-brand-main mr-1"></i> Ketuk pernyataan di <strong>Kiri</strong>, lalu ketuk pasangannya di <strong>Kanan</strong>!
+                            </p>
+                            <div class="grid grid-cols-2 gap-3 md:gap-6">
+                                <div id="match-left" class="flex flex-col gap-2.5"></div>
+                                <div id="match-right" class="flex flex-col gap-2.5"></div>
+                            </div>
+                        </div>
+
+                        <!-- C. Menyusun Urutan -->
+                        <div id="ui-place" class="hidden w-full flex flex-col items-center gap-4">
+                            <p class="text-center text-xs font-bold text-teal-800 bg-teal-50 py-2 px-3 rounded-xl border border-teal-200">
+                                <i class="fas fa-layer-group text-brand-main mr-1"></i> Ketuk kartu di atas untuk menyusunnya ke kotak target secara berurutan!
+                            </p>
+                            <div id="place-source" class="flex flex-wrap justify-center gap-2.5 w-full bg-slate-100 p-3.5 rounded-2xl border-2 border-slate-200 min-h-[72px]"></div>
+                            <div class="text-slate-400 text-xs font-extrabold uppercase tracking-widest">
+                                <i class="fas fa-arrow-down text-brand-main"></i> Urutan Jawaban <i class="fas fa-arrow-down text-brand-main"></i>
+                            </div>
+                            <div id="place-target" class="flex flex-wrap justify-center gap-2.5 w-full"></div>
+                        </div>
+
+                        <!-- D. Input Dua Kotak -->
+                        <div id="ui-input" class="hidden w-full flex flex-col items-center justify-center py-2">
+                            <div class="bg-gradient-to-b from-teal-50 to-white border-2 border-teal-200 p-5 md:p-6 rounded-3xl flex flex-col items-center shadow-inner max-w-md w-full">
+                                <span id="input-instruction" class="text-xs font-black text-teal-800 mb-4 uppercase tracking-wider text-center">
+                                    Masukkan Nilai Jawaban
+                                </span>
+                                <div class="math-input-box flex items-center justify-center gap-3">
+                                    <div class="flex flex-col items-center">
+                                        <label id="label-input-1" class="text-[11px] font-bold text-slate-500 mb-1 uppercase">Kotak 1</label>
+                                        <input type="number" step="any" id="input-val-1" placeholder="?" class="text-brand-dark bg-white">
+                                    </div>
+                                    <div id="input-separator" class="text-2xl font-black text-slate-400 mt-5">•</div>
+                                    <div class="flex flex-col items-center">
+                                        <label id="label-input-2" class="text-[11px] font-bold text-slate-500 mb-1 uppercase">Kotak 2</label>
+                                        <input type="number" step="any" id="input-val-2" placeholder="?" class="text-brand-dark bg-white">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Modal Soal -->
+                <div class="mt-5 pt-4 border-t-2 border-slate-100 flex justify-between items-center gap-3">
+                    <div class="text-xs font-bold text-slate-400">
+                        <i class="fas fa-shield-halved text-brand-main mr-1"></i> Box terkunci sementara untukmu
+                    </div>
+                    <button id="btn-check" class="bg-brand-dark hover:bg-teal-800 text-white px-7 py-3.5 rounded-xl font-extrabold btn-3d flex items-center gap-2 text-sm md:text-base">
+                        <span>Kunci Jawaban</span> <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. MODAL FEEDBACK HASIL BOX -->
+        <div id="alert-modal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform scale-90 transition-transform duration-200 border-2 border-white" id="alert-content">
+                <div class="p-6 text-center">
+                    <div id="alert-icon-wrap" class="mb-3"></div>
+                    <h3 id="alert-title" class="text-2xl font-black mb-1">Luar Biasa!</h3>
+                    <p id="alert-msg" class="text-slate-600 font-semibold text-sm mb-4"></p>
+                    
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left text-xs md:text-sm text-slate-700">
+                        <p class="font-black text-brand-dark uppercase tracking-wider text-[11px] mb-1 flex items-center gap-1">
+                            <i class="fas fa-lightbulb text-amber-500"></i> Konsep & Pembahasan:
+                        </p>
+                        <div id="alert-explanation" class="leading-relaxed font-medium"></div>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 border-t border-slate-100">
+                    <button id="btn-alert-next" class="w-full bg-brand-main text-white py-3.5 rounded-xl font-extrabold btn-3d text-base">
+                        Kembali ke Arena Box <i class="fas fa-th-large ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. LAYAR HASIL AKHIR (SETELAH 5 BOX SELESAI) -->
+        <section id="result-screen" class="glass-panel w-full max-w-2xl p-6 md:p-10 hidden animate-pop-in text-center relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-amber-100 text-amber-500 rounded-2xl mb-4 shadow-md border-4 border-white">
+                    <i class="fas fa-trophy text-4xl"></i>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-black text-brand-dark mb-2">Misi 5 Box Selesai!</h2>
+                <p class="text-sm md:text-base text-slate-600 font-semibold mb-6" id="result-message">Alhamdulillah, kamu telah menyelesaikan 5 pilihan kotak tantanganmu.</p>
+                
+                <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto mb-6">
+                    <div class="bg-white p-4 rounded-2xl border-2 border-teal-200 shadow-sm">
+                        <p class="text-[11px] text-teal-800 font-extrabold mb-1 uppercase">Total Skor</p>
+                        <p class="text-3xl md:text-4xl font-black text-brand-main" id="final-score">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-200 shadow-sm">
+                        <p class="text-[11px] text-emerald-800 font-extrabold mb-1 uppercase">Box Dikuasai</p>
+                        <p class="text-3xl md:text-4xl font-black text-emerald-600" id="final-solved">0/5</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 shadow-sm">
+                        <p class="text-[11px] text-amber-800 font-extrabold mb-1 uppercase">Total Waktu</p>
+                        <p class="text-xl md:text-2xl font-black text-amber-600 mt-2 font-mono" id="final-time">00:00</p>
+                    </div>
+                </div>
+
+                <!-- Status Sinkronisasi Spreadsheet -->
+                <div class="max-w-md mx-auto mb-7">
+                    <div id="status-saving" class="bg-blue-50 p-3.5 rounded-xl border border-blue-200 flex items-center justify-center gap-3 text-xs md:text-sm">
+                        <i class="fas fa-circle-notch fa-spin text-blue-500 text-lg"></i>
+                        <span class="text-blue-800 font-bold">Menyimpan rekap akhir ke Google Spreadsheet...</span>
+                    </div>
+                    <div id="status-success" class="hidden bg-emerald-50 p-3.5 rounded-xl border border-emerald-200 flex items-center justify-center gap-3 text-xs md:text-sm">
+                        <i class="fas fa-check-circle text-emerald-500 text-xl"></i>
+                        <span class="text-emerald-800 font-bold">Skor & penguasaan Box tercatat di Spreadsheet!</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="returnToArenaView()" class="bg-slate-200 text-slate-700 px-6 py-3.5 rounded-xl font-extrabold hover:bg-slate-300 transition">
+                        <i class="fas fa-eye mr-2"></i> Pantau Arena Box
+                    </button>
+                    <a href="dashboard.html" class="bg-brand-gold text-amber-950 px-8 py-3.5 rounded-xl font-black btn-3d-gold hover:bg-amber-300 inline-flex items-center justify-center">
+                        <i class="fas fa-crown mr-2"></i> Buka Hall of Fame
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // ============================================================================
+        // KONFIGURASI URL GOOGLE APPS SCRIPT (GANTI DENGAN URL DEPLOYMENT SPREADSHEET)
+        // ============================================================================
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbz2dRO8BHsxuWncwpPQIGNiWtb4I6C_6gWK5rVeU0pXysESIvbK600cmfcwtqsbXXOCXg/exec";
+
+        const TOTAL_BOXES = 60;
+        const MAX_BOX_PER_STUDENT = 5;
+        const DEFAULT_BOX_COUNTDOWN = 90; // 90 detik per box
+
+        const studentList = [
+            "AHMAD HAFIZ KHAIRY RIZQIANDRA", "ALIF SATRIA PRAYOGA", "ALMAIRAH ZIVANNA SADAT",
+            "ANAYA KALILA AZ-ZAHRA MOHUNE", "ANUGRAH RILAN PRATAMA INAKU", "AZHARANI NUR RAMADHANI",
+            "AZZAM WILDANUM MUKHALLADUN", "MAWADDAH ALAMRI", "MIRZA AIMAN RAHIM",
+            "MOHAMAD SYATHIR ALZAQI LAHATI", "MUH FATNUN SYAMIL MUSA", "MUH KAYSAN ALI RAHMAN",
+            "NADHIF ASRAF IQBAL", "QUEENZHA OLII", "RIF'AH KARIMAH BADJA",
+            "SHOFIYYAH N.B MAHADJANI", "SITI MASRURAH USMAN", "ZHOFIRAH AGNIYAH K. DAUD",
+            "ZISTRI AF IDAINI"
+        ];
+
+        // ============================================================================
+        // BANK SOAL 60 KOTAK (TP 11, TP 12, TP 13: OPERASI BENTUK ALJABAR)
+        // ============================================================================
+        const questions = [
+            // ========================================================================
+            // TP 11 (BOX 1 - 20): IDENTIFIKASI VARIABEL, KOEFISIEN, KONSTANTA, SUKU & SUKU SEJENIS
+            // ========================================================================
+            {
+                boxId: 1, tpCode: 'TP11', category: 'TP 11 • Identifikasi Variabel', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Panitia Ramadhan SMA IT Al-Ishlah mencatat total donasi sebesar \\( 5x + 3y + 100.000 \\), dengan \\( x \\) adalah paket kurma dan \\( y \\) adalah paket air mineral. Huruf \\( x \\) dan \\( y \\) pada bentuk aljabar tersebut dinamakan...',
+                options: ['Variabel (Peubah)', 'Koefisien', 'Konstanta', 'Suku Sejenis'],
+                correctIndex: 0,
+                explanation: 'Lambang atau huruf yang mewakili suatu nilai yang belum diketahui (seperti \\( x \\) dan \\( y \\)) disebut Variabel.'
+            },
+            {
+                boxId: 2, tpCode: 'TP11', category: 'TP 11 • Identifikasi Koefisien', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Perhatikan bentuk aljabar \\( 7a - 4b + 9 \\). Koefisien dari variabel \\( b \\) adalah...',
+                options: ['\\( -4 \\)', '\\( 4 \\)', '\\( 7 \\)', '\\( 9 \\)'],
+                correctIndex: 0,
+                explanation: 'Tanda negatif ikut melekat pada suku tersebut: \\( 7a + (-4)b + 9 \\), sehingga koefisien dari \\( b \\) adalah \\( -4 \\).'
+            },
+            {
+                boxId: 3, tpCode: 'TP11', category: 'TP 11 • Koefisien & Konstanta', type: 'input', points: 25, timeLimit: 90,
+                text: 'Pada ekspresi aljabar \\( 8p - 12 \\), masukkan nilai <strong>koefisien \\( p \\)</strong> pada Kotak 1 dan nilai <strong>konstanta</strong> pada Kotak 2!',
+                inputConfig: { instruction: 'Perhatikan tanda negatif pada konstanta', label1: 'Koefisien p', label2: 'Konstanta', sep: '&' },
+                correctAnswer: { val1: 8, val2: -12 },
+                explanation: 'Angka di depan variabel \\( p \\) adalah koefisien yaitu \\( 8 \\), sedangkan suku tetap tanpa variabel adalah konstanta yaitu \\( -12 \\).'
+            },
+            {
+                boxId: 4, tpCode: 'TP11', category: 'TP 11 • Banyaknya Suku', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Banyaknya suku pada bentuk aljabar \\( 3x^2 - 5xy + 2y^2 - 8 \\) adalah...',
+                options: ['\\( 4 \\) suku', '\\( 3 \\) suku', '\\( 2 \\) suku', '\\( 5 \\) suku'],
+                correctIndex: 0,
+                explanation: 'Suku-sukunya dipisahkan oleh operasi tambah/kurang, yaitu: \\( 3x^2 \\), \\( -5xy \\), \\( 2y^2 \\), dan \\( -8 \\) (ada 4 suku / polinom).'
+            },
+            {
+                boxId: 5, tpCode: 'TP11', category: 'TP 11 • Menjodohkan Unsur Aljabar', type: 'match', points: 25, timeLimit: 105,
+                text: 'Diketahui bentuk aljabar \\( 6m^2 - m + 15 \\). Pasangkan unsur aljabar di kiri dengan nilainya yang tepat di kanan!',
+                pairs: [
+                    { left: 'Koefisien dari \\( m^2 \\)', right: '\\( 6 \\)' },
+                    { left: 'Koefisien dari \\( m \\)', right: '\\( -1 \\)' },
+                    { left: 'Konstanta', right: '\\( 15 \\)' }
+                ],
+                explanation: 'Pada \\( 6m^2 - 1m + 15 \\), koefisien \\( m^2 \\) adalah \\( 6 \\), koefisien \\( m \\) adalah \\( -1 \\), dan konstantanya \\( 15 \\).'
+            },
+            {
+                boxId: 6, tpCode: 'TP11', category: 'TP 11 • Membedakan Suku Sejenis', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Manakah pasangan suku-suku berikut yang merupakan <strong>suku sejenis</strong>?',
+                options: ['\\( 4x^2y \\) dan \\( -7x^2y \\)', '\\( 3x^2 \\) dan \\( 3x \\)', '\\( 5ab^2 \\) dan \\( 5a^2b \\)', '\\( 2p \\) dan \\( 2q \\)'],
+                correctIndex: 0,
+                explanation: 'Suku sejenis harus memiliki variabel DAN pangkat variabel yang persis sama. Hanya \\( 4x^2y \\) dan \\( -7x^2y \\) yang sama-sama memuat \\( x^2y \\).'
+            },
+            {
+                boxId: 7, tpCode: 'TP11', category: 'TP 11 • Suku Tidak Sejenis', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Mengapa suku \\( 6p^2q \\) dan \\( 6pq^2 \\) disebut sebagai <strong>suku tidak sejenis</strong>?',
+                options: [
+                    'Karena pangkat dari masing-masing variabel \\( p \\) dan \\( q \\) berbeda',
+                    'Karena koefisien keduanya sama-sama 6',
+                    'Karena keduanya memuat huruf \\( p \\) dan \\( q \\)',
+                    'Karena keduanya tidak memiliki konstanta'
+                ],
+                correctIndex: 0,
+                explanation: 'Walaupun hurufnya sama (\\( p \\) dan \\( q \\)), pada \\( 6p^2q \\) pangkat \\( p \\) adalah 2, sedangkan pada \\( 6pq^2 \\) pangkat \\( p \\) adalah 1.'
+            },
+            {
+                boxId: 8, tpCode: 'TP11', category: 'TP 11 • Pasangan Suku Sejenis', type: 'match', points: 25, timeLimit: 105,
+                text: 'Pasangkan setiap suku di sebelah kiri dengan pasangan <strong>suku sejenisnya</strong> di sebelah kanan!',
+                pairs: [
+                    { left: '\\( 5a^2 \\)', right: '\\( -2a^2 \\)' },
+                    { left: '\\( -3ab \\)', right: '\\( 9ab \\)' },
+                    { left: '\\( 7b^2 \\)', right: '\\( b^2 \\)' },
+                    { left: '\\( -4a \\)', right: '\\( 11a \\)' }
+                ],
+                explanation: 'Suku sejenis memiliki bagian variabel dan pangkat yang identik: \\( a^2 \\) dengan \\( a^2 \\), \\( ab \\) dengan \\( ab \\), dst.'
+            },
+            {
+                boxId: 9, tpCode: 'TP11', category: 'TP 11 • Koefisien Implisit', type: 'input', points: 25, timeLimit: 95,
+                text: 'Perhatikan bentuk aljabar \\( x - y + 7 \\). Masukkan koefisien dari \\( x \\) pada Kotak 1 dan koefisien dari \\( y \\) pada Kotak 2!',
+                inputConfig: { instruction: 'Ingat x = 1x dan -y = -1y', label1: 'Koefisien x', label2: 'Koefisien y', sep: '&' },
+                correctAnswer: { val1: 1, val2: -1 },
+                explanation: 'Jika angka 1 tidak ditulis di depan variabel, maka \\( x \\) memiliki koefisien \\( 1 \\) dan \\( -y \\) memiliki koefisien \\( -1 \\).'
+            },
+            {
+                boxId: 10, tpCode: 'TP11', category: 'TP 11 • Istilah Banyak Suku', type: 'match', points: 25, timeLimit: 100,
+                text: 'Pasangkan bentuk aljabar di sebelah kiri dengan nama jenis sukunya di sebelah kanan!',
+                pairs: [
+                    { left: '\\( 9x^2y \\)', right: 'Monomial (Suku Satu)' },
+                    { left: '\\( 4x - 7 \\)', right: 'Binomial (Suku Dua)' },
+                    { left: '\\( x^2 + 3x - 10 \\)', right: 'Trinomial (Suku Tiga)' }
+                ],
+                explanation: 'Monomial memiliki 1 suku, Binomial memiliki 2 suku, dan Trinomial memiliki 3 suku.'
+            },
+            {
+                boxId: 11, tpCode: 'TP11', category: 'TP 11 • Pemodelan Aljabar Kontekstual', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Koperasi sekolah menjual buku tulis dengan harga \\( b \\) rupiah dan pulpen dengan harga \\( p \\) rupiah. Jika Ahmad membeli 4 buku tulis, 2 pulpen, dan membayar parkir Rp2.000, bentuk aljabarnya adalah...',
+                options: ['\\( 4b + 2p + 2000 \\)', '\\( 2b + 4p + 2000 \\)', '\\( 6bp + 2000 \\)', '\\( 4b + 2p - 2000 \\)'],
+                correctIndex: 0,
+                explanation: '4 buku tulis = \\( 4b \\), 2 pulpen = \\( 2p \\), ditambah biaya tetap (konstanta) 2000 menghasilkan \\( 4b + 2p + 2000 \\).'
+            },
+            {
+                boxId: 12, tpCode: 'TP11', category: 'TP 11 • Identifikasi Suku Sejenis Dalam Ekspresi', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Suku-suku yang sejenis dari bentuk aljabar \\( 6x^2 + 6xy - 4y^2 - 7x^2 + 2xy \\) adalah...',
+                options: [
+                    '\\( 6x^2 \\) dengan \\( -7x^2 \\), serta \\( 6xy \\) dengan \\( 2xy \\)',
+                    '\\( 6x^2 \\) dengan \\( 6xy \\), serta \\( -4y^2 \\) dengan \\( 2xy \\)',
+                    '\\( 6x^2 \\) dengan \\( -4y^2 \\)',
+                    '\\( 6xy \\) dengan \\( -4y^2 \\)'
+                ],
+                correctIndex: 0,
+                explanation: '\\( 6x^2 \\) dan \\( -7x^2 \\) sejenis (bervariabel \\( x^2 \\)); \\( 6xy \\) dan \\( 2xy \\) juga sejenis (bervariabel \\( xy \\)).'
+            },
+            {
+                boxId: 13, tpCode: 'TP11', category: 'TP 11 • Menghitung Banyak Suku & Konstanta', type: 'input', points: 25, timeLimit: 95,
+                text: 'Perhatikan ekspresi \\( 2a^3 - 5a^2 + a - 9 \\). Masukkan <strong>banyaknya seluruh suku</strong> pada Kotak 1 dan nilai <strong>konstantanya</strong> pada Kotak 2!',
+                inputConfig: { instruction: 'Hitung jumlah suku dan suku tetapnya', label1: 'Banyak Suku', label2: 'Konstanta', sep: '&' },
+                correctAnswer: { val1: 4, val2: -9 },
+                explanation: 'Terdapat 4 suku yaitu \\( 2a^3, -5a^2, a, \\) dan \\( -9 \\). Konstantanya adalah \\( -9 \\).'
+            },
+            {
+                boxId: 14, tpCode: 'TP11', category: 'TP 11 • Urutan Pangkat Turun', type: 'place', points: 25, timeLimit: 105,
+                text: 'Susunlah suku-suku dari bentuk aljabar \\( -5x + 3x^3 + 8 - 2x^2 \\) mulai dari <strong>pangkat \\( x \\) tertinggi hingga konstanta</strong>!',
+                items: [
+                    { id: '1', content: '\\( 3x^3 \\)' },
+                    { id: '2', content: '\\( -2x^2 \\)' },
+                    { id: '3', content: '\\( -5x \\)' },
+                    { id: '4', content: '\\( +8 \\)' }
+                ],
+                correctOrder: ['1', '2', '3', '4'],
+                explanation: 'Urutan derajat pangkat turun: pangkat 3 (\\( 3x^3 \\)), pangkat 2 (\\( -2x^2 \\)), pangkat 1 (\\( -5x \\)), lalu konstanta (\\( +8 \\)).'
+            },
+            {
+                boxId: 15, tpCode: 'TP11', category: 'TP 11 • Konstanta Bernilai Nol', type: 'input', points: 20, timeLimit: 90,
+                text: 'Pada bentuk aljabar \\( 10m - 3n \\), berapakah koefisien \\( m \\) (Kotak 1) dan nilai konstantanya (Kotak 2)?',
+                inputConfig: { instruction: 'Jika tidak ada suku angka berdiri sendiri, konstanta = 0', label1: 'Koefisien m', label2: 'Konstanta', sep: '&' },
+                correctAnswer: { val1: 10, val2: 0 },
+                explanation: 'Koefisien \\( m \\) adalah \\( 10 \\). Karena tidak tertulis suku tetap, berarti konstantanya adalah \\( 0 \\).'
+            },
+            {
+                boxId: 16, tpCode: 'TP11', category: 'TP 11 • Sifat Komutatif Variabel', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Apakah suku \\( 5ab \\) dan \\( -8ba \\) merupakan suku yang sejenis?',
+                options: [
+                    'Ya, sejenis karena \\( ab = ba \\) (sifat komutatif perkalian)',
+                    'Tidak sejenis karena urutan hurufnya terbalik',
+                    'Tidak sejenis karena koefisiennya berbeda tanda',
+                    'Hanya sejenis jika \\( a = b \\)'
+                ],
+                correctIndex: 0,
+                explanation: 'Dalam perkalian aljabar berlaku sifat komutatif \\( a \\times b = b \\times a \\), sehingga \\( 5ab \\) dan \\( -8ba \\) adalah suku sejenis.'
+            },
+            {
+                boxId: 17, tpCode: 'TP11', category: 'TP 11 • Analisis Koefisien Negatif', type: 'input', points: 25, timeLimit: 95,
+                text: 'Diketahui bentuk aljabar \\( -9p^2 - p + 4 \\). Masukkan koefisien \\( p^2 \\) pada Kotak 1 dan koefisien \\( p \\) pada Kotak 2!',
+                inputConfig: { instruction: 'Sertakan tanda minus (-)', label1: 'Koefisien p²', label2: 'Koefisien p', sep: '&' },
+                correctAnswer: { val1: -9, val2: -1 },
+                explanation: 'Koefisien dari \\( p^2 \\) adalah \\( -9 \\) dan koefisien dari \\( -p \\) (yaitu \\( -1p \\)) adalah \\( -1 \\).'
+            },
+            {
+                boxId: 18, tpCode: 'TP11', category: 'TP 11 • Mengelompokkan Suku Sejenis', type: 'place', points: 25, timeLimit: 105,
+                text: 'Susunlah langkah-langkah mengidentifikasi dan mengelompokkan suku sejenis dari \\( 4x + 7y - x + 2y \\)!',
+                items: [
+                    { id: '1', content: 'Amati seluruh suku: \\( 4x, 7y, -x, 2y \\)' },
+                    { id: '2', content: 'Kelompokkan suku bervariabel \\( x \\): \\( (4x - x) \\)' },
+                    { id: '3', content: 'Kelompokkan suku bervariabel \\( y \\): \\( (7y + 2y) \\)' },
+                    { id: '4', content: 'Gabungkan kelompok: \\( (4x - x) + (7y + 2y) \\)' }
+                ],
+                correctOrder: ['1', '2', '3', '4'],
+                explanation: 'Untuk menyederhanakan aljabar, kita amati sukunya lalu dekatkan suku-suku yang memiliki variabel sama.'
+            },
+            {
+                boxId: 19, tpCode: 'TP11', category: 'TP 11 • Konteks Kotak Infaq', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Di perpustakaan terdapat 3 rak besar yang masing-masing berisi \\( r \\) buku, 2 kardus yang masing-masing berisi \\( k \\) buku, serta 7 buku di meja petugas. Manakah pernyataan yang benar dari bentuk \\( 3r + 2k + 7 \\)?',
+                options: [
+                    '7 adalah konstanta, sedangkan \\( r \\) dan \\( k \\) adalah variabel',
+                    '3 dan 2 adalah variabel, sedangkan 7 adalah koefisien',
+                    '\\( 3r \\) dan \\( 2k \\) adalah suku sejenis',
+                    'Banyaknya suku adalah 2 suku'
+                ],
+                correctIndex: 0,
+                explanation: 'Angka 7 berdiri sendiri tanpa variabel sehingga merupakan konstanta, sedangkan \\( r \\) dan \\( k \\) adalah variabel.'
+            },
+            {
+                boxId: 20, tpCode: 'TP11', category: 'TP 11 • Evaluasi Komponen Aljabar', type: 'match', points: 25, timeLimit: 105,
+                text: 'Pada bentuk aljabar \\( -4x^2 + 11x - 6 \\), pasangkan pertanyaan di kiri dengan jawaban yang tepat di kanan!',
+                pairs: [
+                    { left: 'Variabel yang digunakan', right: '\\( x \\)' },
+                    { left: 'Koefisien dari \\( x^2 \\)', right: '\\( -4 \\)' },
+                    { left: 'Koefisien dari \\( x \\)', right: '\\( 11 \\)' },
+                    { left: 'Nilai Konstanta', right: '\\( -6 \\)' }
+                ],
+                explanation: 'Variabelnya adalah \\( x \\), koefisien \\( x^2 \\) adalah \\( -4 \\), koefisien \\( x \\) adalah \\( 11 \\), dan konstantanya \\( -6 \\).'
+            },
+
+            // ========================================================================
+            // TP 12 (BOX 21 - 40): PENJUMLAHAN & PENGURANGAN EKSPRESI ALJABAR
+            // ========================================================================
+            {
+                boxId: 21, tpCode: 'TP12', category: 'TP 12 • Penjumlahan Suku Sejenis', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Bentuk paling sederhana dari \\( 8a + 5b - 3a + 2b \\) adalah...',
+                options: ['\\( 5a + 7b \\)', '\\( 11a + 7b \\)', '\\( 5a + 3b \\)', '\\( 12ab \\)'],
+                correctIndex: 0,
+                explanation: 'Kelompokkan suku sejenis: \\( (8a - 3a) + (5b + 2b) = 5a + 7b \\).'
+            },
+            {
+                boxId: 22, tpCode: 'TP12', category: 'TP 12 • Penjumlahan Dua Binomial', type: 'input', points: 25, timeLimit: 95,
+                text: 'Sederhanakanlah \\( (6x + 4) + (3x - 10) \\) menjadi bentuk \\( ax + b \\)! Masukkan nilai \\( a \\) pada Kotak 1 dan nilai \\( b \\) pada Kotak 2.',
+                inputConfig: { instruction: 'Hasil berbentuk ax + b', label1: 'Koefisien x (a)', label2: 'Konstanta (b)', sep: 'x +' },
+                correctAnswer: { val1: 9, val2: -6 },
+                explanation: '\\( (6x + 3x) + (4 - 10) = 9x - 6 \\). Maka \\( a = 9 \\) dan \\( b = -6 \\).'
+            },
+            {
+                boxId: 23, tpCode: 'TP12', category: 'TP 12 • Pengurangan Bentuk Aljabar', type: 'mcq', points: 20, timeLimit: 95,
+                text: 'Hasil pengurangan \\( (9p - 6q) - (4p - 10q) \\) adalah...',
+                options: ['\\( 5p + 4q \\)', '\\( 5p - 16q \\)', '\\( 13p + 4q \\)', '\\( 5p - 4q \\)'],
+                correctIndex: 0,
+                explanation: 'Perhatikan tanda minus saat membuka kurung kedua: \\( 9p - 6q - 4p + 10q = (9p - 4p) + (-6q + 10q) = 5p + 4q \\).'
+            },
+            {
+                boxId: 24, tpCode: 'TP12', category: 'TP 12 • Kata Kunci "Kurangkan A dari B"', type: 'mcq', points: 25, timeLimit: 100,
+                text: 'Kurangkanlah \\( (3x - 2y) \\) <strong>dari</strong> \\( (8x + 5y) \\)! Hasilnya adalah...',
+                options: ['\\( 5x + 7y \\)', '\\( 5x + 3y \\)', '\\( -5x - 7y \\)', '\\( 11x + 3y \\)'],
+                correctIndex: 0,
+                explanation: '"Kurangkan A dari B" berarti \\( B - A \\): \\( (8x + 5y) - (3x - 2y) = 8x + 5y - 3x + 2y = 5x + 7y \\).'
+            },
+            {
+                boxId: 25, tpCode: 'TP12', category: 'TP 12 • Langkah Pengelompokan Suku Sejenis', type: 'place', points: 25, timeLimit: 105,
+                text: 'Susunlah langkah-langkah menyederhanakan \\( (7a - 4b) - (2a - 9b) \\) secara berurutan!',
+                items: [
+                    { id: '1', content: 'Buka tanda kurung: \\( 7a - 4b - 2a + 9b \\)' },
+                    { id: '2', content: 'Kelompokkan suku sejenis: \\( (7a - 2a) + (-4b + 9b) \\)' },
+                    { id: '3', content: 'Operasikan koefisien: \\( (7-2)a + (-4+9)b \\)' },
+                    { id: '4', content: 'Hasil akhir: \\( 5a + 5b \\)' }
+                ],
+                correctOrder: ['1', '2', '3', '4'],
+                explanation: 'Buka kurung dengan mengalikan tanda negatif, kelompokkan suku sejenis \\( a \\) dan \\( b \\), lalu hitung koefisiennya.'
+            },
+            {
+                boxId: 26, tpCode: 'TP12', category: 'TP 12 • Penjumlahan & Pengurangan Kuadrat', type: 'input', points: 25, timeLimit: 95,
+                text: 'Sederhanakan \\( 5x^2 - 2x + 3x^2 + 9x \\) menjadi \\( ax^2 + bx \\)! Masukkan nilai \\( a \\) dan \\( b \\).',
+                inputConfig: { instruction: 'Kelompokkan x² dan x secara terpisah', label1: 'Koefisien x² (a)', label2: 'Koefisien x (b)', sep: 'x² +' },
+                correctAnswer: { val1: 8, val2: 7 },
+                explanation: '\\( (5x^2 + 3x^2) + (-2x + 9x) = 8x^2 + 7x \\). Jadi \\( a = 8 \\) dan \\( b = 7 \\).'
+            },
+            {
+                boxId: 27, tpCode: 'TP12', category: 'TP 12 • Menjodohkan Operasi Aljabar', type: 'match', points: 25, timeLimit: 110,
+                text: 'Pasangkan operasi penjumlahan/pengurangan di kiri dengan hasil paling sederhananya di kanan!',
+                pairs: [
+                    { left: '\\( (4x + 2) + (x - 5) \\)', right: '\\( 5x - 3 \\)' },
+                    { left: '\\( (4x + 2) - (x - 5) \\)', right: '\\( 3x + 7 \\)' },
+                    { left: '\\( (x - 5) - (4x + 2) \\)', right: '\\( -3x - 7 \\)' }
+                ],
+                explanation: '\\( (4x+2)+(x-5)=5x-3 \\); \\( (4x+2)-(x-5)=3x+7 \\); dan \\( (x-5)-(4x+2)=-3x-7 \\).'
+            },
+            {
+                boxId: 28, tpCode: 'TP12', category: 'TP 12 • Keliling Segitiga Aljabar', type: 'mcq', points: 25, timeLimit: 100,
+                text: 'Sebuah taman berbentuk segitiga memiliki panjang sisi \\( (2x + 3) \\) m, \\( (3x - 1) \\) m, dan \\( (x + 10) \\) m. Keliling taman tersebut dalam \\( x \\) adalah...',
+                options: ['\\( (6x + 12) \\) m', '\\( (6x + 14) \\) m', '\\( (5x + 12) \\) m', '\\( (6x + 10) \\) m'],
+                correctIndex: 0,
+                explanation: 'Keliling = jumlah ketiga sisi: \\( (2x + 3x + x) + (3 - 1 + 10) = 6x + 12 \\) meter.'
+            },
+            {
+                boxId: 29, tpCode: 'TP12', category: 'TP 12 • Pengurangan Trinomial', type: 'input', points: 25, timeLimit: 100,
+                text: 'Jika \\( (6a^2 + 5a - 3) - (2a^2 - 3a - 3) = pa^2 + qa \\), berapakah nilai \\( p \\) dan \\( q \\)?',
+                inputConfig: { instruction: 'Konstanta (-3) - (-3) habis menjadi 0', label1: 'Nilai p (a²)', label2: 'Nilai q (a)', sep: '&' },
+                correctAnswer: { val1: 4, val2: 8 },
+                explanation: '\\( (6 - 2)a^2 + (5 - (-3))a + (-3 - (-3)) = 4a^2 + 8a + 0 \\). Maka \\( p = 4 \\) dan \\( q = 8 \\).'
+            },
+            {
+                boxId: 30, tpCode: 'TP12', category: 'TP 12 • Konteks Persediaan Beras Zakat', type: 'mcq', points: 20, timeLimit: 95,
+                text: 'Gudang panitia zakat memiliki \\( (12k + 8) \\) karung beras. Sore harinya disalurkan kepada warga sebanyak \\( (7k - 2) \\) karung. Sisa karung beras di gudang adalah...',
+                options: ['\\( 5k + 10 \\)', '\\( 5k + 6 \\)', '\\( 19k + 6 \\)', '\\( 5k - 10 \\)'],
+                correctIndex: 0,
+                explanation: 'Sisa = \\( (12k + 8) - (7k - 2) = 12k + 8 - 7k + 2 = 5k + 10 \\) karung.'
+            },
+            {
+                boxId: 31, tpCode: 'TP12', category: 'TP 12 • Operasi Tiga Suku Aljabar', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Bentuk sederhana dari \\( 10m - 4n - 6m + 9n - 2 \\) adalah...',
+                options: ['\\( 4m + 5n - 2 \\)', '\\( 4m - 5n - 2 \\)', '\\( 16m + 5n - 2 \\)', '\\( 4m + 13n - 2 \\)'],
+                correctIndex: 0,
+                explanation: 'Kelompokkan: \\( (10m - 6m) + (-4n + 9n) - 2 = 4m + 5n - 2 \\).'
+            },
+            {
+                boxId: 32, tpCode: 'TP12', category: 'TP 12 • Suku Campuran xy', type: 'input', points: 25, timeLimit: 95,
+                text: 'Sederhanakan \\( 9xy - 4x + 3xy + 10x \\) menjadi \\( a\\,xy + b\\,x \\)! Masukkan koefisien \\( a \\) dan \\( b \\).',
+                inputConfig: { instruction: 'Jumlahkan suku xy dan suku x', label1: 'Koefisien xy (a)', label2: 'Koefisien x (b)', sep: '&' },
+                correctAnswer: { val1: 12, val2: 6 },
+                explanation: '\\( (9xy + 3xy) + (-4x + 10x) = 12xy + 6x \\). Jadi \\( a = 12 \\) dan \\( b = 6 \\).'
+            },
+            {
+                boxId: 33, tpCode: 'TP12', category: 'TP 12 • Pasangan Ekspresi Ekuivalen', type: 'match', points: 25, timeLimit: 105,
+                text: 'Pasangkan bentuk aljabar yang belum sederhana di kiri dengan hasil penyederhanaannya di kanan!',
+                pairs: [
+                    { left: '\\( 5p - 3q - 8p + 3q \\)', right: '\\( -3p \\)' },
+                    { left: '\\( -2p + 5q + 2p - q \\)', right: '\\( 4q \\)' },
+                    { left: '\\( 4p + q - p - q \\)', right: '\\( 3p \\)' }
+                ],
+                explanation: 'Suku yang berlawanan tanda dengan koefisien sama akan saling menghilangkan (bernilai 0).'
+            },
+            {
+                boxId: 34, tpCode: 'TP12', category: 'TP 12 • Menentukan Suku yang Hilang', type: 'input', points: 25, timeLimit: 100,
+                text: 'Diketahui \\( (7x + 3y) + (Ax + By) = 12x - 2y \\). Berapakah nilai \\( A \\) dan \\( B \\)?',
+                inputConfig: { instruction: '7 + A = 12 dan 3 + B = -2', label1: 'Nilai A', label2: 'Nilai B', sep: '&' },
+                correctAnswer: { val1: 5, val2: -5 },
+                explanation: '\\( A = 12 - 7 = 5 \\) dan \\( B = -2 - 3 = -5 \\).'
+            },
+            {
+                boxId: 35, tpCode: 'TP12', category: 'TP 12 • Pengurangan ”Dari” Bentuk Kuadrat', type: 'mcq', points: 25, timeLimit: 100,
+                text: 'Hasil pengurangan \\( 2x^2 - 5x \\) <strong>dari</strong> \\( 6x^2 + 3x \\) adalah...',
+                options: ['\\( 4x^2 + 8x \\)', '\\( 4x^2 - 2x \\)', '\\( -4x^2 - 8x \\)', '\\( 8x^2 - 2x \\)'],
+                correctIndex: 0,
+                explanation: '\\( (6x^2 + 3x) - (2x^2 - 5x) = 6x^2 + 3x - 2x^2 + 5x = 4x^2 + 8x \\).'
+            },
+            {
+                boxId: 36, tpCode: 'TP12', category: 'TP 12 • Menyusun Penyelesaian Kontekstual', type: 'place', points: 25, timeLimit: 105,
+                text: 'Panjang sebuah persegi panjang adalah \\( (3x + 2) \\) cm dan lebarnya \\( (x - 1) \\) cm. Susun langkah menghitung jumlah panjang dan lebarnya (\\( p + l \\))!',
+                items: [
+                    { id: '1', content: 'Substitusi: \\( (3x + 2) + (x - 1) \\)' },
+                    { id: '2', content: 'Dekatkan suku sejenis: \\( 3x + x + 2 - 1 \\)' },
+                    { id: '3', content: 'Jumlahkan suku \\( x \\): \\( 4x + (2 - 1) \\)' },
+                    { id: '4', content: 'Bentuk sederhana: \\( 4x + 1 \\)' }
+                ],
+                correctOrder: ['1', '2', '3', '4'],
+                explanation: '\\( p + l = (3x + 2) + (x - 1) = (3x + x) + (2 - 1) = 4x + 1 \\) cm.'
+            },
+            {
+                boxId: 37, tpCode: 'TP12', category: 'TP 12 • Operasi Tiga Kelompok Kurung', type: 'mcq', points: 25, timeLimit: 105,
+                text: 'Sederhanakanlah \\( (4a + b) + (2a - 5b) - (a - 2b) \\)!',
+                options: ['\\( 5a - 2b \\)', '\\( 5a - 6b \\)', '\\( 7a - 2b \\)', '\\( 5a + 2b \\)'],
+                correctIndex: 0,
+                explanation: '\\( 4a + b + 2a - 5b - a + 2b = (4 + 2 - 1)a + (1 - 5 + 2)b = 5a - 2b \\).'
+            },
+            {
+                boxId: 38, tpCode: 'TP12', category: 'TP 12 • Penjumlahan Koefisien Negatif', type: 'input', points: 20, timeLimit: 95,
+                text: 'Sederhanakan \\( (-8k + 15) + (3k - 9) \\) menjadi \\( ak + b \\)! Masukkan nilai \\( a \\) dan \\( b \\).',
+                inputConfig: { instruction: 'Hitung -8 + 3 dan 15 - 9', label1: 'Koefisien k (a)', label2: 'Konstanta (b)', sep: 'k +' },
+                correctAnswer: { val1: -5, val2: 6 },
+                explanation: '\\( (-8 + 3)k + (15 - 9) = -5k + 6 \\). Jadi \\( a = -5 \\) dan \\( b = 6 \\).'
+            },
+            {
+                boxId: 39, tpCode: 'TP12', category: 'TP 12 • Analisis Kesalahan Tanda', type: 'mcq', points: 20, timeLimit: 95,
+                text: 'Seorang siswa menyederhanakan \\( (5x - 3) - (2x - 7) \\) menjadi \\( 5x - 3 - 2x - 7 = 3x - 10 \\). Letak kesalahan siswa tersebut adalah...',
+                options: [
+                    'Saat membuka kurung kedua, seharusnya \\( -(-7) \\) berubah menjadi \\( +7 \\) sehingga hasilnya \\( 3x + 4 \\)',
+                    'Seharusnya \\( 5x - 2x \\) menghasilkan \\( 7x \\)',
+                    'Suku \\( 5x \\) dan \\( -2x \\) tidak boleh dikurangkan',
+                    'Tidak ada kesalahan, jawaban siswa sudah benar'
+                ],
+                correctIndex: 0,
+                explanation: 'Tanda minus di depan kurung mengubah tanda seluruh suku di dalam kurung: \\( -(2x - 7) = -2x + 7 \\), sehingga \\( 5x - 2x - 3 + 7 = 3x + 4 \\).'
+            },
+            {
+                boxId: 40, tpCode: 'TP12', category: 'TP 12 • Tantangan Tabungan Santri', type: 'input', points: 25, timeLimit: 100,
+                text: 'Tabungan Hafiz sebesar \\( (10x - 5000) \\) rupiah dan tabungan Alif sebesar \\( (8x + 15000) \\) rupiah. Jika dijumlahkan menjadi \\( ax + b \\), masukkan nilai \\( a \\) dan \\( b \\)!',
+                inputConfig: { instruction: 'Jumlahkan koefisien x dan konstantanya', label1: 'Nilai a', label2: 'Nilai b', sep: 'x +' },
+                correctAnswer: { val1: 18, val2: 10000 },
+                explanation: '\\( (10x + 8x) + (-5000 + 15000) = 18x + 10000 \\).'
+            },
+
+            // ========================================================================
+            // TP 13 (BOX 41 - 60): PERKALIAN ALJABAR (MONOMIAL × MONOMIAL & MONOMIAL × BINOMIAL)
+            // ========================================================================
+            {
+                boxId: 41, tpCode: 'TP13', category: 'TP 13 • Monomial × Monomial Dasar', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Hasil perkalian dua monomial \\( 4x \\times 5y \\) adalah...',
+                options: ['\\( 20xy \\)', '\\( 9xy \\)', '\\( 20x + 20y \\)', '\\( 9x + y \\)'],
+                correctIndex: 0,
+                explanation: 'Kalikan koefisien dengan koefisien dan variabel dengan variabel: \\( (4 \\times 5) \\cdot (x \\times y) = 20xy \\).'
+            },
+            {
+                boxId: 42, tpCode: 'TP13', category: 'TP 13 • Monomial × Monomial Sejenis', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Hasil dari perkalian \\( (-3a) \\times (6a) \\) adalah...',
+                options: ['\\( -18a^2 \\)', '\\( -18a \\)', '\\( 18a^2 \\)', '\\( 3a^2 \\)'],
+                correctIndex: 0,
+                explanation: '\\( (-3 \\times 6) \\cdot (a \\times a) = -18a^2 \\).'
+            },
+            {
+                boxId: 43, tpCode: 'TP13', category: 'TP 13 • Monomial Berpangkat', type: 'input', points: 25, timeLimit: 95,
+                text: 'Tentukan hasil dari \\( 5p^2 \\times 4p^3 = k \\cdot p^n \\)! Masukkan nilai koefisien \\( k \\) pada Kotak 1 dan pangkat \\( n \\) pada Kotak 2!',
+                inputConfig: { instruction: 'Kalikan koefisien, jumlahkan pangkat variabel p', label1: 'Koefisien (k)', label2: 'Pangkat (n)', sep: 'p^' },
+                correctAnswer: { val1: 20, val2: 5 },
+                explanation: '\\( (5 \\times 4) \\cdot p^{2+3} = 20p^5 \\). Maka \\( k = 20 \\) dan \\( n = 5 \\).'
+            },
+            {
+                boxId: 44, tpCode: 'TP13', category: 'TP 13 • Monomial × Binomial (Distributif)', type: 'mcq', points: 20, timeLimit: 90,
+                text: 'Dengan menggunakan sifat distributif, hasil jabaran dari \\( 3(2x + 5) \\) adalah...',
+                options: ['\\( 6x + 15 \\)', '\\( 6x + 5 \\)', '\\( 5x + 8 \\)', '\\( 6x + 8 \\)'],
+                correctIndex: 0,
+                explanation: 'Sifat distributif \\( a(b + c) = ab + ac \\): \\( (3 \\times 2x) + (3 \\times 5) = 6x + 15 \\).'
+            },
+            {
+                boxId: 45, tpCode: 'TP13', category: 'TP 13 • Sifat Distributif dengan Variabel', type: 'input', points: 25, timeLimit: 95,
+                text: 'Jabarkanlah \\( 4x(3x - 2) \\) menjadi bentuk \\( ax^2 + bx \\)! Masukkan nilai \\( a \\) pada Kotak 1 dan nilai \\( b \\) pada Kotak 2.',
+                inputConfig: { instruction: 'Kalikan 4x ke setiap suku di dalam kurung', label1: 'Koefisien x² (a)', label2: 'Koefisien x (b)', sep: 'x² +' },
+                correctAnswer: { val1: 12, val2: -8 },
+                explanation: '\\( (4x \\times 3x) + (4x \\times (-2)) = 12x^2 - 8x \\). Jadi \\( a = 12 \\) dan \\( b = -8 \\).'
+            },
+            {
+                boxId: 46, tpCode: 'TP13', category: 'TP 13 • Pengali Monomial Negatif', type: 'mcq', points: 25, timeLimit: 95,
+                text: 'Hasil perkalian dari \\( -2a(5a - 4b) \\) adalah...',
+                options: ['\\( -10a^2 + 8ab \\)', '\\( -10a^2 - 8ab \\)', '\\( 10a^2 - 8ab \\)', '\\( -7a^2 + 6ab \\)'],
+                correctIndex: 0,
+                explanation: 'Perhatikan perkalian dua bilangan negatif: \\( (-2a \\times 5a) + (-2a \\times (-4b)) = -10a^2 + 8ab \\).'
+            },
+            {
+                boxId: 47, tpCode: 'TP13', category: 'TP 13 • Menjodohkan Perkalian Aljabar', type: 'match', points: 25, timeLimit: 105,
+                text: 'Pasangkan perkalian bentuk aljabar di kiri dengan hasil jabarannya di sebelah kanan!',
+                pairs: [
+                    { left: '\\( 2x \\times 3x \\)', right: '\\( 6x^2 \\)' },
+                    { left: '\\( 2x(3x + 1) \\)', right: '\\( 6x^2 + 2x \\)' },
+                    { left: '\\( -2x(3x - 1) \\)', right: '\\( -6x^2 + 2x \\)' },
+                    { left: '\\( 3x(2 - x) \\)', right: '\\( 6x - 3x^2 \\)' }
+                ],
+                explanation: 'Gunakan sifat distributif \\( a(b \\pm c) = ab \\pm ac \\) dan perhatikan tanda positif/negatifnya.'
+            },
+            {
+                boxId: 48, tpCode: 'TP13', category: 'TP 13 • Langkah Sifat Distributif', type: 'place', points: 25, timeLimit: 105,
+                text: 'Susunlah langkah-langkah menjabarkan perkalian \\( 5p(2p - 3q) \\) menggunakan sifat distributif!',
+                items: [
+                    { id: '1', content: 'Terapkan sifat distributif: \\( (5p \\times 2p) - (5p \\times 3q) \\)' },
+                    { id: '2', content: 'Hitung suku pertama: \\( 5p \\times 2p = 10p^2 \\)' },
+                    { id: '3', content: 'Hitung suku kedua: \\( -5p \\times 3q = -15pq \\)' },
+                    { id: '4', content: 'Gabungkan hasil: \\( 10p^2 - 15pq \\)' }
+                ],
+                correctOrder: ['1', '2', '3', '4'],
+                explanation: 'Kalikan monomial di luar kurung ke suku pertama dan suku kedua binomial secara berurutan.'
+            },
+            {
+                boxId: 49, tpCode: 'TP13', category: 'TP 13 • Luas Kebun Sekolah', type: 'mcq', points: 25, timeLimit: 95,
+                text: 'Kebun apotek hidup SMA IT Al-Ishlah berbentuk persegi panjang dengan lebar \\( 3x \\) meter dan panjang \\( (4x + 5) \\) meter. Luas kebun tersebut adalah...',
+                options: ['\\( (12x^2 + 15x)\\text{ m}^2 \\)', '\\( (7x + 5)\\text{ m}^2 \\)', '\\( (12x + 15)\\text{ m}^2 \\)', '\\( (12x^2 + 5)\\text{ m}^2 \\)'],
+                correctIndex: 0,
+                explanation: 'Luas = \\( l \\times p = 3x(4x + 5) = (3x \\cdot 4x) + (3x \\cdot 5) = 12x^2 + 15x\\text{ m}^2 \\).'
+            },
+            {
+                boxId: 50, tpCode: 'TP13', category: 'TP 13 • Perkalian Monomial Dua Variabel', type: 'mcq', points: 25, timeLimit: 95,
+                text: 'Hasil dari \\( (-4x^2y) \\times (-3xy^3) \\) adalah...',
+                options: ['\\( 12x^3y^4 \\)', '\\( -12x^3y^4 \\)', '\\( 12x^2y^3 \\)', '\\( 7x^3y^4 \\)'],
+                correctIndex: 0,
+                explanation: 'Negatif kali negatif menghasilkan positif: \\( (-4 \\times -3) \\cdot x^{2+1} \\cdot y^{1+3} = 12x^3y^4 \\).'
+            },
+            {
+                boxId: 51, tpCode: 'TP13', category: 'TP 13 • Koefisien Hasil Distributif', type: 'input', points: 25, timeLimit: 95,
+                text: 'Jabarkan \\( -6m(2m - 5) = am^2 + bm \\)! Masukkan nilai \\( a \\) pada Kotak 1 dan nilai \\( b \\) pada Kotak 2.',
+                inputConfig: { instruction: '-6m × (-5) bernilai positif', label1: 'Koefisien m² (a)', label2: 'Koefisien m (b)', sep: 'm² +' },
+                correctAnswer: { val1: -12, val2: 30 },
+                explanation: '\\( (-6m \\times 2m) + (-6m \\times (-5)) = -12m^2 + 30m \\). Maka \\( a = -12 \\) dan \\( b = 30 \\).'
+            },
+            {
+                boxId: 52, tpCode: 'TP13', category: 'TP 13 • Gabungan Distributif & Suku Sejenis', type: 'mcq', points: 25, timeLimit: 105,
+                text: 'Bentuk paling sederhana dari \\( 2(3x + 4) + 3(x - 2) \\) adalah...',
+                options: ['\\( 9x + 2 \\)', '\\( 9x + 14 \\)', '\\( 6x + 2 \\)', '\\( 9x - 2 \\)'],
+                correctIndex: 0,
+                explanation: 'Jabarkan keduanya: \\( 6x + 8 + 3x - 6 = (6x + 3x) + (8 - 6) = 9x + 2 \\).'
+            },
+            {
+                boxId: 53, tpCode: 'TP13', category: 'TP 13 • Distributif dengan Pengurangan', type: 'mcq', points: 25, timeLimit: 105,
+                text: 'Sederhanakanlah bentuk aljabar \\( 5(2a - 1) - 2(3a - 4) \\)!',
+                options: ['\\( 4a + 3 \\)', '\\( 4a - 13 \\)', '\\( 16a + 3 \\)', '\\( 4a - 5 \\)'],
+                correctIndex: 0,
+                explanation: '\\( 10a - 5 - 6a + 8 = (10a - 6a) + (-5 + 8) = 4a + 3 \\).'
+            },
+            {
+                boxId: 54, tpCode: 'TP13', category: 'TP 13 • Pasangan Monomial × Monomial', type: 'match', points: 25, timeLimit: 105,
+                text: 'Pasangkan operasi perkalian monomial di kiri dengan hasil yang benar di kanan!',
+                pairs: [
+                    { left: '\\( 7a \\times (-2b) \\)', right: '\\( -14ab \\)' },
+                    { left: '\\( (-7a) \\times (-2a) \\)', right: '\\( 14a^2 \\)' },
+                    { left: '\\( 2a^2 \\times 7a \\)', right: '\\( 14a^3 \\)' }
+                ],
+                explanation: '\\( 7a(-2b) = -14ab \\); \\( (-7a)(-2a) = 14a^2 \\); dan \\( 2a^2(7a) = 14a^3 \\).'
+            },
+            {
+                boxId: 55, tpCode: 'TP13', category: 'TP 13 • Mencari Faktor Pengali', type: 'input', points: 25, timeLimit: 100,
+                text: 'Diketahui \\( k \\cdot x(2x + 7) = 6x^2 + mx \\). Masukkan nilai \\( k \\) pada Kotak 1 dan nilai \\( m \\) pada Kotak 2!',
+                inputConfig: { instruction: 'Cari k dari k·2 = 6, lalu hitung m = k·7', label1: 'Nilai k', label2: 'Nilai m', sep: '&' },
+                correctAnswer: { val1: 3, val2: 21 },
+                explanation: 'Karena \\( 2k = 6 \\implies k = 3 \\). Maka \\( m = 3 \\times 7 = 21 \\).'
+            },
+            {
+                boxId: 56, tpCode: 'TP13', category: 'TP 13 • Monomial Pangkat Dua × Binomial', type: 'mcq', points: 25, timeLimit: 95,
+                text: 'Hasil jabaran dari \\( 3x^2(2x - 5y) \\) adalah...',
+                options: ['\\( 6x^3 - 15x^2y \\)', '\\( 6x^2 - 15x^2y \\)', '\\( 5x^3 - 8x^2y \\)', '\\( 6x^3 - 15xy \\)'],
+                correctIndex: 0,
+                explanation: '\\( (3x^2 \\times 2x) - (3x^2 \\times 5y) = 6x^3 - 15x^2y \\).'
+            },
+            {
+                boxId: 57, tpCode: 'TP13', category: 'TP 13 • Langkah Menyederhanakan Distributif Ganda', type: 'place', points: 25, timeLimit: 110,
+                text: 'Susun langkah-langkah menyederhanakan \\( 3x(x + 2) + 4x(x - 1) \\) secara berurutan!',
+                items: [
+                    { id: '1', content: 'Jabarkan kurung pertama: \\( 3x^2 + 6x \\)' },
+                    { id: '2', content: 'Jabarkan kurung kedua: \\( + 4x^2 - 4x \\)' },
+                    { id: '3', content: 'Kelompokkan suku sejenis: \\( (3x^2 + 4x^2) + (6x - 4x) \\)' },
+                    { id: '4', content: 'Hasil akhir: \\( 7x^2 + 2x \\)' }
+                ],
+                correctOrder: ['1', '2', '3', '4'],
+                explanation: 'Gunakan sifat distributif pada masing-masing suku, lalu jumlahkan suku-suku yang sejenis.'
+            },
+            {
+                boxId: 58, tpCode: 'TP13', category: 'TP 13 • Luas Karpet Masjid', type: 'input', points: 25, timeLimit: 100,
+                text: 'Sebuah gulungan karpet masjid memiliki lebar \\( 2a \\) meter dan panjang \\( (5a + 3) \\) meter. Jika luasnya dinyatakan sebagai \\( pa^2 + qa \\), masukkan nilai \\( p \\) dan \\( q \\)!',
+                inputConfig: { instruction: 'Luas = 2a × (5a + 3)', label1: 'Nilai p (a²)', label2: 'Nilai q (a)', sep: '&' },
+                correctAnswer: { val1: 10, val2: 6 },
+                explanation: 'Luas = \\( 2a(5a + 3) = 10a^2 + 6a \\). Maka \\( p = 10 \\) dan \\( q = 6 \\).'
+            },
+            {
+                boxId: 59, tpCode: 'TP13', category: 'TP 13 • Perkalian Binomial dari Kanan', type: 'mcq', points: 20, timeLimit: 95,
+                text: 'Hasil dari \\( (4p - 3q) \\times (-5p) \\) adalah...',
+                options: ['\\( -20p^2 + 15pq \\)', '\\( -20p^2 - 15pq \\)', '\\( 20p^2 - 15pq \\)', '\\( -9p^2 + 15pq \\)'],
+                correctIndex: 0,
+                explanation: 'Kalikan setiap suku di dalam kurung dengan \\( -5p \\): \\( 4p(-5p) - 3q(-5p) = -20p^2 + 15pq \\).'
+            },
+            {
+                boxId: 60, tpCode: 'TP13', category: 'TP 13 • Misi Puncak Aljabar', type: 'input', points: 30, timeLimit: 105,
+                text: 'Sederhanakan \\( 4x(2x - 3) - 2x(x - 5) \\) menjadi bentuk \\( ax^2 + bx \\)! Masukkan nilai \\( a \\) pada Kotak 1 dan nilai \\( b \\) pada Kotak 2.',
+                inputConfig: { instruction: '8x² - 12x - 2x² + 10x', label1: 'Koefisien x² (a)', label2: 'Koefisien x (b)', sep: 'x² +' },
+                correctAnswer: { val1: 6, val2: -2 },
+                explanation: '\\( 8x^2 - 12x - 2x^2 + 10x = (8 - 2)x^2 + (-12 + 10)x = 6x^2 - 2x \\). Jadi \\( a = 6 \\) dan \\( b = -2 \\).'
+            }
+        ];
+
+        // ============================================================================
+        // STATE MANAJEMEN PERMAINAN & REAL-TIME BOX
+        // ============================================================================
+        let state = {
+            filterTP: 'ALL',
+            user: null,
+            score: 0,
+            totalTimeSpent: 0,
+            myPickedBoxes: [], // Maksimal 5 box yang telah diselesaikan/dipilih siswa ini
+            activeBoxId: null,
+            boxCountdown: 0,
+            boxTimerInterval: null,
+            pollInterval: null,
+            boxRegistry: {}, // { 1..60: { status: 'OPEN'|'LOCKED'|'SOLVED', owner: '', lastTriedBy: '' } }
+            currentSelection: null,
+            matchPairsCompleted: 0,
+            matchLeftSel: null,
+            matchRightSel: null,
+            placeItems: [],
+            isSubmitting: false,
+            mathJaxPromise: Promise.resolve()
+        };
+
+        function typesetMath(elements) {
+            if (typeof window.MathJax !== 'undefined') {
+                state.mathJaxPromise = state.mathJaxPromise.then(() => {
+                    if (typeof MathJax.typesetPromise === 'function') {
+                        return MathJax.typesetPromise(elements);
+                    }
+                    return Promise.resolve();
+                }).catch(() => Promise.resolve());
+            }
+        }
+
+        function initBoxRegistry() {
+            for (let i = 1; i <= TOTAL_BOXES; i++) {
+                if (!state.boxRegistry[i]) {
+                    state.boxRegistry[i] = {
+                        boxId: i,
+                        status: 'OPEN', // OPEN, LOCKED, SOLVED
+                        owner: '',
+                        lastTriedBy: '',
+                        lockedUntil: 0
+                    };
+                }
+            }
+        }
+
+        function init() {
+            initBoxRegistry();
+            const select = document.getElementById('student-select');
+            studentList.sort().forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                select.appendChild(opt);
+            });
+
+            select.addEventListener('change', (e) => {
+                state.user = e.target.value;
+                document.getElementById('btn-start').disabled = false;
+            });
+
+            document.getElementById('btn-start').addEventListener('click', enterArena);
+            document.getElementById('btn-check').addEventListener('click', () => submitBoxAnswer(false));
+            document.getElementById('btn-alert-next').addEventListener('click', closeFeedbackModal);
+        }
+
+        async function enterArena() {
+            document.getElementById('login-screen').classList.add('hidden');
+            const arena = document.getElementById('arena-screen');
+            arena.classList.remove('hidden');
+            arena.classList.add('flex');
+            document.getElementById('header-info').classList.remove('hidden');
+            document.getElementById('arena-player-name').textContent = state.user;
+
+            updateHeaderStats();
+            renderArenaGrid();
+
+            // Tarik status Box dari Google Spreadsheet saat masuk
+            await syncArenaBoxes(false);
+
+            // Polling berkala setiap 6 detik agar status box siswa lain selalu ter-update
+            clearInterval(state.pollInterval);
+            state.pollInterval = setInterval(() => {
+                if (!state.activeBoxId) syncArenaBoxes(false);
+            }, 6000);
+        }
+
+        function setFilterTP(tp) {
+            state.filterTP = tp;
+            document.querySelectorAll('.tp-tab').forEach(btn => {
+                if (btn.dataset.tp === tp) {
+                    btn.className = "tp-tab bg-brand-dark text-white px-3.5 py-1.5 rounded-xl font-extrabold text-xs shadow-sm transition";
+                } else {
+                    btn.className = "tp-tab bg-white text-slate-600 hover:bg-teal-50 px-3.5 py-1.5 rounded-xl font-extrabold text-xs border border-slate-200 transition";
+                }
+            });
+            renderArenaGrid();
+        }
+
+        function shortStudentName(fullName) {
+            if (!fullName) return "";
+            const parts = fullName.trim().split(/\s+/);
+            if (parts.length === 1) return parts[0];
+            return `${parts[0]} ${parts[1][0]}.`;
+        }
+
+        function updateHeaderStats() {
+            const count = state.myPickedBoxes.length;
+            document.getElementById('quota-display').textContent = `${count} / ${MAX_BOX_PER_STUDENT} Box`;
+            document.getElementById('score-display').textContent = state.score;
+
+            // Render 5 indikator slot box di atas arena
+            const slotsEl = document.getElementById('my-box-slots');
+            slotsEl.innerHTML = '';
+            for (let i = 0; i < MAX_BOX_PER_STUDENT; i++) {
+                const item = state.myPickedBoxes[i];
+                if (!item) {
+                    slotsEl.innerHTML += `<div class="w-7 h-7 rounded-lg border-2 border-dashed border-slate-300 bg-white flex items-center justify-center text-[10px] font-black text-slate-300">${i + 1}</div>`;
+                } else if (item.correct) {
+                    slotsEl.innerHTML += `<div class="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm" title="Box #${item.boxId} Benar">#${item.boxId}</div>`;
+                } else {
+                    slotsEl.innerHTML += `<div class="w-7 h-7 rounded-lg bg-rose-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm" title="Box #${item.boxId} Belum Tepat">#${item.boxId}</div>`;
+                }
+            }
+
+            const btnFinish = document.getElementById('btn-finish-early');
+            if (count >= MAX_BOX_PER_STUDENT) {
+                btnFinish.classList.remove('hidden');
+            }
+        }
+
+        function renderArenaGrid() {
+            const grid = document.getElementById('boxes-grid');
+            grid.innerHTML = '';
+
+            let openCount = 0, lockedCount = 0, solvedCount = 0;
+
+            questions.forEach(q => {
+                const bState = state.boxRegistry[q.boxId] || { status: 'OPEN', owner: '', lastTriedBy: '' };
+                if (bState.status === 'OPEN') openCount++;
+                else if (bState.status === 'LOCKED') lockedCount++;
+                else if (bState.status === 'SOLVED') solvedCount++;
+
+                if (state.filterTP !== 'ALL' && q.tpCode !== state.filterTP) return;
+
+                const isSolved = bState.status === 'SOLVED';
+                const isLocked = bState.status === 'LOCKED';
+                const isMine = bState.owner === state.user && isSolved;
+
+                let cardStyle = 'box-open';
+                if (isMine) cardStyle = 'box-mine';
+                else if (isSolved) cardStyle = 'box-solved';
+                else if (isLocked) cardStyle = 'box-locked';
+
+                const boxEl = document.createElement('div');
+                boxEl.className = `mystery-box ${cardStyle} rounded-2xl p-3.5 flex flex-col justify-between min-h-[132px] select-none`;
+
+                let statusBadge = '';
+                let ownerFooter = '';
+
+                if (isSolved) {
+                    statusBadge = `<span class="bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md uppercase flex items-center gap-1"><i class="fas fa-lock"></i> Terjawab</span>`;
+                    ownerFooter = `
+                        <div class="mt-2 bg-white/90 border border-emerald-300 rounded-xl p-1.5 text-center">
+                            <span class="block text-[9px] font-extrabold uppercase text-emerald-700">Penakluk Box:</span>
+                            <span class="block text-[11px] font-black text-slate-800 truncate">${shortStudentName(bState.owner)}</span>
+                        </div>
+                    `;
+                } else if (isLocked) {
+                    statusBadge = `<span class="bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-md uppercase flex items-center gap-1 animate-pulse"><i class="fas fa-hourglass-half"></i> Dibuka</span>`;
+                    ownerFooter = `
+                        <div class="mt-2 bg-white/90 border border-amber-300 rounded-xl p-1.5 text-center">
+                            <span class="block text-[9px] font-extrabold uppercase text-amber-700">Sedang Dijawab:</span>
+                            <span class="block text-[11px] font-black text-slate-800 truncate">${shortStudentName(bState.owner)}</span>
+                        </div>
+                    `;
+                } else {
+                    statusBadge = `<span class="bg-teal-100 text-teal-800 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">+${q.points} ⭐</span>`;
+                    if (bState.lastTriedBy) {
+                        ownerFooter = `
+                            <div class="mt-2 bg-rose-50 border border-rose-200 rounded-xl p-1 text-center">
+                                <span class="block text-[9px] font-extrabold text-rose-600 truncate"><i class="fas fa-rotate-right mr-0.5"></i> Terbuka Lagi (${shortStudentName(bState.lastTriedBy)})</span>
+                            </div>
+                        `;
+                    } else {
+                        ownerFooter = `
+                            <div class="mt-2 bg-teal-50/80 border border-teal-200/70 rounded-xl p-1.5 text-center">
+                                <span class="block text-[10px] font-extrabold text-teal-700"><i class="fas fa-hand-pointer mr-1"></i> Ketuk Buka Box</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                boxEl.innerHTML = `
+                    <div class="flex justify-between items-start gap-1">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">${q.category.split('•')[0]}</span>
+                        ${statusBadge}
+                    </div>
+                    <div class="my-2 flex flex-col items-center justify-center">
+                        <div class="w-11 h-11 rounded-2xl ${isSolved ? 'bg-emerald-500 text-white' : isLocked ? 'bg-amber-400 text-amber-950' : 'bg-brand-dark text-white'} flex items-center justify-center font-black text-lg shadow-sm">
+                            ${q.boxId}
+                        </div>
+                    </div>
+                    ${ownerFooter}
+                `;
+
+                if (!isSolved && !isLocked) {
+                    boxEl.onclick = () => handleBoxSelect(q.boxId);
+                }
+
+                grid.appendChild(boxEl);
+            });
+
+            document.getElementById('count-open').textContent = openCount;
+            document.getElementById('count-locked').textContent = lockedCount;
+            document.getElementById('count-solved').textContent = solvedCount;
+        }
+
+        async function handleBoxSelect(boxId) {
+            if (state.myPickedBoxes.length >= MAX_BOX_PER_STUDENT) {
+                showSimpleNotice("Kuota 5 Box Terpenuhi!", "Kamu sudah memilih 5 Box pada misi ini. Silakan lihat hasil akhirmu!");
+                return;
+            }
+
+            const bState = state.boxRegistry[boxId];
+            if (bState && (bState.status === 'SOLVED' || bState.status === 'LOCKED')) {
+                renderArenaGrid();
+                return;
+            }
+
+            // Kunci lokal segera & sinkronkan ke Google Spreadsheet
+            state.boxRegistry[boxId] = {
+                boxId: boxId,
+                status: 'LOCKED',
+                owner: state.user,
+                lastTriedBy: bState ? bState.lastTriedBy : ''
+            };
+            renderArenaGrid();
+
+            // Kirim klaim ke GAS (menggunakan text/plain agar bebas blokir preflight CORS di GitHub Pages)
+            try {
+                const res = await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'claimBox',
+                        boxId: boxId,
+                        nama: state.user
+                    })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.status === 'denied') {
+                        // Jika siswa lain baru saja mengklik box ini sepersekian detik lebih dulu
+                        if (data.boxes) applyRemoteBoxes(data.boxes);
+                        renderArenaGrid();
+                        showSimpleNotice("Box Baru Saja Dipilih!", `Box #${boxId} baru saja dipilih oleh ${data.owner || 'siswa lain'}. Silakan pilih box lain yang tersedia!`);
+                        return;
+                    }
+                }
+            } catch (e) {
+                // Jika mode fallback/offline atau deployment lama, tetap lanjutkan
+                console.warn("Info sinkronisasi klaim box:", e);
+            }
+
+            openQuestionModal(boxId);
+        }
+
+        function openQuestionModal(boxId) {
+            state.activeBoxId = boxId;
+            const q = questions.find(item => item.boxId === boxId);
+            if (!q) return;
+
+            document.getElementById('modal-box-number').textContent = `#${boxId}`;
+            document.getElementById('q-category-badge').textContent = q.category;
+            document.getElementById('q-points').textContent = q.points;
+            document.getElementById('question-text').innerHTML = q.text;
+
+            // Sembunyikan semua UI tipe soal dulu
+            ['ui-mcq', 'ui-match', 'ui-place', 'ui-input'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            const btnCheck = document.getElementById('btn-check');
+            btnCheck.disabled = true;
+
+            if (q.type === 'mcq') renderMCQ(q);
+            else if (q.type === 'match') renderMatch(q);
+            else if (q.type === 'place') renderPlace(q);
+            else if (q.type === 'input') renderInput(q);
+
+            const modal = document.getElementById('question-modal');
+            modal.classList.remove('hidden');
+            typesetMath([modal]);
+
+            startBoxCountdown(q.timeLimit || DEFAULT_BOX_COUNTDOWN);
+        }
+
+        function startBoxCountdown(seconds) {
+            clearInterval(state.boxTimerInterval);
+            const totalSec = seconds;
+            state.boxCountdown = seconds;
+
+            const textEl = document.getElementById('box-countdown-text');
+            const barEl = document.getElementById('box-timer-bar');
+            const pillEl = document.getElementById('box-timer-pill');
+
+            pillEl.className = "bg-teal-50 border-2 border-teal-200 text-brand-dark px-4 py-1.5 rounded-xl font-black text-xl font-mono flex items-center gap-2 shadow-inner";
+            barEl.className = "bg-brand-main h-full transition-all duration-1000";
+            barEl.style.width = "100%";
+
+            const updateTimerUI = () => {
+                const m = Math.floor(state.boxCountdown / 60).toString().padStart(2, '0');
+                const s = (state.boxCountdown % 60).toString().padStart(2, '0');
+                textEl.textContent = `${m}:${s}`;
+                const pct = Math.max(0, (state.boxCountdown / totalSec) * 100);
+                barEl.style.width = `${pct}%`;
+
+                if (state.boxCountdown <= 15) {
+                    pillEl.className = "bg-rose-100 border-2 border-rose-300 text-rose-700 px-4 py-1.5 rounded-xl font-black text-xl font-mono flex items-center gap-2 animate-pulse";
+                    barEl.className = "bg-rose-500 h-full transition-all duration-1000";
+                }
+            };
+
+            updateTimerUI();
+            state.boxTimerInterval = setInterval(() => {
+                state.boxCountdown--;
+                updateTimerUI();
+                if (state.boxCountdown <= 0) {
+                    clearInterval(state.boxTimerInterval);
+                    submitBoxAnswer(true); // Waktu habis = otomatis salah & box terbuka lagi untuk siswa lain
+                }
+            }, 1000);
+        }
+
+        function renderMCQ(q) {
+            document.getElementById('q-type-badge').textContent = "Pilihan Ganda";
+            const container = document.getElementById('ui-mcq');
+            container.classList.remove('hidden');
+            container.innerHTML = '';
+            state.currentSelection = null;
+
+            q.options.forEach((opt, idx) => {
+                const card = document.createElement('div');
+                card.className = 'option-card bg-white rounded-2xl p-4 md:p-5 text-center text-base md:text-lg font-bold shadow-sm relative flex items-center justify-center min-h-[80px]';
+                card.innerHTML = `
+                    <span class="absolute top-2.5 left-3 text-xs font-black text-slate-400 bg-slate-100 w-6 h-6 rounded-full flex items-center justify-center">${String.fromCharCode(65 + idx)}</span>
+                    <div class="px-4">${opt}</div>
+                `;
+                card.onclick = () => {
+                    Array.from(container.children).forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    state.currentSelection = idx;
+                    document.getElementById('btn-check').disabled = false;
+                };
+                container.appendChild(card);
+            });
+        }
+
+        function renderInput(q) {
+            document.getElementById('q-type-badge').textContent = "Isian Dua Kotak";
+            document.getElementById('ui-input').classList.remove('hidden');
+
+            const cfg = q.inputConfig || { instruction: 'Masukkan Jawaban', label1: 'Kotak 1', label2: 'Kotak 2', sep: '•' };
+            document.getElementById('input-instruction').textContent = cfg.instruction;
+            document.getElementById('label-input-1').textContent = cfg.label1;
+            document.getElementById('label-input-2').textContent = cfg.label2;
+            document.getElementById('input-separator').textContent = cfg.sep;
+
+            const v1 = document.getElementById('input-val-1');
+            const v2 = document.getElementById('input-val-2');
+            v1.value = '';
+            v2.value = '';
+
+            const checkFn = () => {
+                document.getElementById('btn-check').disabled = !(v1.value.trim() !== '' && v2.value.trim() !== '');
+            };
+            v1.oninput = checkFn;
+            v2.oninput = checkFn;
+        }
+
+        function renderMatch(q) {
+            document.getElementById('q-type-badge').textContent = "Menjodohkan";
+            document.getElementById('ui-match').classList.remove('hidden');
+            const leftCol = document.getElementById('match-left');
+            const rightCol = document.getElementById('match-right');
+            leftCol.innerHTML = '';
+            rightCol.innerHTML = '';
+
+            state.matchPairsCompleted = 0;
+            state.matchLeftSel = null;
+            state.matchRightSel = null;
+
+            let rightPairs = [...q.pairs].map((p, i) => ({ ...p, originalIndex: i }));
+            rightPairs.sort(() => Math.random() - 0.5);
+
+            q.pairs.forEach((pair, idx) => {
+                const lCard = document.createElement('div');
+                lCard.className = 'match-item bg-white p-3 rounded-xl text-center font-bold text-sm md:text-base shadow-sm flex items-center justify-center min-h-[56px]';
+                lCard.innerHTML = pair.left;
+                lCard.dataset.idx = idx;
+                lCard.dataset.side = 'left';
+                lCard.onclick = () => handleMatchClick(lCard, q.pairs.length);
+                leftCol.appendChild(lCard);
+            });
+
+            rightPairs.forEach((pair) => {
+                const rCard = document.createElement('div');
+                rCard.className = 'match-item bg-white p-3 rounded-xl text-center font-bold text-sm md:text-base shadow-sm flex items-center justify-center min-h-[56px]';
+                rCard.innerHTML = pair.right;
+                rCard.dataset.idx = pair.originalIndex;
+                rCard.dataset.side = 'right';
+                rCard.onclick = () => handleMatchClick(rCard, q.pairs.length);
+                rightCol.appendChild(rCard);
+            });
+        }
+
+        function handleMatchClick(card, totalPairs) {
+            if (card.classList.contains('solved')) return;
+            const isLeft = card.dataset.side === 'left';
+            const col = isLeft ? document.getElementById('match-left') : document.getElementById('match-right');
+
+            Array.from(col.children).forEach(c => {
+                if (!c.classList.contains('solved')) c.classList.remove('active');
+            });
+            card.classList.add('active');
+
+            if (isLeft) state.matchLeftSel = card;
+            else state.matchRightSel = card;
+
+            if (state.matchLeftSel && state.matchRightSel) {
+                if (state.matchLeftSel.dataset.idx === state.matchRightSel.dataset.idx) {
+                    state.matchLeftSel.classList.replace('active', 'solved');
+                    state.matchRightSel.classList.replace('active', 'solved');
+                    state.matchPairsCompleted++;
+                    state.matchLeftSel = null;
+                    state.matchRightSel = null;
+
+                    if (state.matchPairsCompleted === totalPairs) {
+                        document.getElementById('btn-check').disabled = false;
+                    }
+                } else {
+                    const lTemp = state.matchLeftSel;
+                    const rTemp = state.matchRightSel;
+                    lTemp.classList.remove('active');
+                    rTemp.classList.remove('active');
+                    lTemp.classList.add('animate-shake', 'border-red-400', 'bg-red-50');
+                    rTemp.classList.add('animate-shake', 'border-red-400', 'bg-red-50');
+                    setTimeout(() => {
+                        lTemp.classList.remove('animate-shake', 'border-red-400', 'bg-red-50');
+                        rTemp.classList.remove('animate-shake', 'border-red-400', 'bg-red-50');
+                    }, 450);
+                    state.matchLeftSel = null;
+                    state.matchRightSel = null;
+                }
+            }
+        }
+
+        function renderPlace(q) {
+            document.getElementById('q-type-badge').textContent = "Menyusun Urutan";
+            document.getElementById('ui-place').classList.remove('hidden');
+            const source = document.getElementById('place-source');
+            const target = document.getElementById('place-target');
+            source.innerHTML = '';
+            target.innerHTML = '';
+            state.placeItems = [];
+
+            const shuffled = [...q.items].sort(() => Math.random() - 0.5);
+            q.items.forEach((_, i) => {
+                target.innerHTML += `<div class="slot-target" id="slot-${i}"></div>`;
+            });
+
+            shuffled.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'slot-item px-3 py-2 rounded-xl shadow-sm text-xs md:text-sm font-bold min-w-[75px] text-center flex items-center justify-center';
+                el.innerHTML = item.content;
+                el.dataset.id = item.id;
+
+                el.onclick = () => {
+                    const emptySlot = Array.from(target.children).find(s => s.children.length === 0);
+                    if (emptySlot && el.parentElement === source) {
+                        emptySlot.appendChild(el);
+                        state.placeItems.push(item.id);
+                        el.classList.add('border-brand-main', 'bg-teal-50/40');
+                    } else if (el.parentElement !== source) {
+                        source.appendChild(el);
+                        state.placeItems = state.placeItems.filter(id => id !== item.id);
+                        el.classList.remove('border-brand-main', 'bg-teal-50/40');
+                    }
+                    document.getElementById('btn-check').disabled = state.placeItems.length !== q.items.length;
+                };
+                source.appendChild(el);
+            });
+        }
+
+        async function submitBoxAnswer(isTimeout = false) {
+            if (state.isSubmitting || !state.activeBoxId) return;
+            state.isSubmitting = true;
+            clearInterval(state.boxTimerInterval);
+
+            const boxId = state.activeBoxId;
+            const q = questions.find(item => item.boxId === boxId);
+
+            let isCorrect = false;
+            if (!isTimeout && q) {
+                if (q.type === 'mcq') {
+                    isCorrect = (state.currentSelection === q.correctIndex);
+                } else if (q.type === 'input') {
+                    const v1 = parseFloat(document.getElementById('input-val-1').value);
+                    const v2 = parseFloat(document.getElementById('input-val-2').value);
+                    isCorrect = (v1 === q.correctAnswer.val1 && v2 === q.correctAnswer.val2);
+                } else if (q.type === 'match') {
+                    isCorrect = (state.matchPairsCompleted === q.pairs.length);
+                } else if (q.type === 'place') {
+                    const currentOrder = Array.from(document.getElementById('place-target').children).map(slot => {
+                        return (slot && slot.firstChild && slot.firstChild.dataset) ? slot.firstChild.dataset.id : null;
+                    });
+                    isCorrect = JSON.stringify(currentOrder) === JSON.stringify(q.correctOrder);
+                }
+            }
+
+            const timeAllowed = q.timeLimit || DEFAULT_BOX_COUNTDOWN;
+            const timeSpentOnBox = Math.max(1, timeAllowed - state.boxCountdown);
+            state.totalTimeSpent += timeSpentOnBox;
+
+            const earnedPoints = isCorrect ? q.points : 0;
+            state.score += earnedPoints;
+
+            // Catat di kuota 5 box siswa
+            state.myPickedBoxes.push({
+                boxId: boxId,
+                correct: isCorrect,
+                points: earnedPoints,
+                timeSpent: timeSpentOnBox
+            });
+
+            // ATURAN INTI OPEN THE BOX:
+            // - Jika BENAR: Box dikunci permanen atas nama siswa (SOLVED)
+            // - Jika SALAH / TIMEOUT: Box terbuka kembali (OPEN) agar masih bisa dijawab siswa lain!
+            if (isCorrect) {
+                state.boxRegistry[boxId] = {
+                    boxId: boxId,
+                    status: 'SOLVED',
+                    owner: state.user,
+                    lastTriedBy: state.user
+                };
+            } else {
+                state.boxRegistry[boxId] = {
+                    boxId: boxId,
+                    status: 'OPEN',
+                    owner: '',
+                    lastTriedBy: state.user
+                };
+            }
+
+            document.getElementById('question-modal').classList.add('hidden');
+            state.activeBoxId = null;
+            updateHeaderStats();
+            renderArenaGrid();
+
+            // Kirim hasil box ke Google Spreadsheet
+            sendBoxResultToGAS(boxId, isCorrect, earnedPoints, timeSpentOnBox);
+
+            // Tampilkan pembahasan
+            showFeedbackModal(isCorrect, isTimeout, earnedPoints, boxId, q.explanation);
+            state.isSubmitting = false;
+        }
+
+        function showFeedbackModal(isCorrect, isTimeout, points, boxId, explanation) {
+            const overlay = document.getElementById('alert-modal');
+            const content = document.getElementById('alert-content');
+            const iconWrap = document.getElementById('alert-icon-wrap');
+            const title = document.getElementById('alert-title');
+            const msg = document.getElementById('alert-msg');
+            const expEl = document.getElementById('alert-explanation');
+
+            overlay.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            });
+
+            if (isCorrect) {
+                iconWrap.innerHTML = '<div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl inline-flex items-center justify-center text-4xl shadow-inner"><i class="fas fa-lock"></i></div>';
+                title.textContent = `Box #${boxId} Berhasil Dikuasai!`;
+                title.className = "text-2xl font-black mb-1 text-emerald-600";
+                msg.innerHTML = `MasyaAllah! Kamu meraih <strong class="text-emerald-700">+${points} Poin</strong> dan Box #${boxId} kini terkunci atas namamu.`;
+            } else if (isTimeout) {
+                iconWrap.innerHTML = '<div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl inline-flex items-center justify-center text-4xl shadow-inner"><i class="fas fa-hourglass-end"></i></div>';
+                title.textContent = `Waktu Box #${boxId} Habis!`;
+                title.className = "text-2xl font-black mb-1 text-amber-600";
+                msg.innerHTML = `Box #${boxId} otomatis <strong>terbuka kembali</strong> dan dapat dipilih oleh siswa lain.`;
+            } else {
+                iconWrap.innerHTML = '<div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-2xl inline-flex items-center justify-center text-4xl shadow-inner"><i class="fas fa-unlock"></i></div>';
+                title.textContent = `Box #${boxId} Terbuka Kembali!`;
+                title.className = "text-2xl font-black mb-1 text-rose-600";
+                msg.innerHTML = `Jawaban belum tepat. Sesuai aturan, Box #${boxId} <strong>masih bisa dijawab lagi oleh siswa lain</strong>!`;
+            }
+
+            expEl.innerHTML = explanation || "Pelajari konsep ini kembali ya.";
+            typesetMath([expEl]);
+        }
+
+        function showSimpleNotice(titleText, bodyText) {
+            const overlay = document.getElementById('alert-modal');
+            const content = document.getElementById('alert-content');
+            document.getElementById('alert-icon-wrap').innerHTML = '<div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl inline-flex items-center justify-center text-3xl"><i class="fas fa-bell"></i></div>';
+            document.getElementById('alert-title').textContent = titleText;
+            document.getElementById('alert-title').className = "text-xl font-black mb-1 text-amber-700";
+            document.getElementById('alert-msg').textContent = bodyText;
+            document.getElementById('alert-explanation').textContent = "Pilih kotak berwarna putih-hijau (Tersedia) pada papan arena.";
+            overlay.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            });
+        }
+
+        function closeFeedbackModal() {
+            const overlay = document.getElementById('alert-modal');
+            const content = document.getElementById('alert-content');
+            overlay.classList.add('hidden');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+
+            if (state.myPickedBoxes.length >= MAX_BOX_PER_STUDENT) {
+                showFinalResultScreen();
+            }
+        }
+
+        async function syncArenaBoxes(showSpinner = false) {
+            const icon = document.getElementById('sync-icon');
+            const label = document.getElementById('sync-status-label');
+            if (showSpinner && icon) icon.classList.add('fa-spin');
+
+            try {
+                const response = await fetch(`${GAS_URL}?action=getArenaState&t=${Date.now()}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && Array.isArray(data.boxes)) {
+                        applyRemoteBoxes(data.boxes);
+                    }
+                    if (label) label.textContent = "Tersinkronisasi dengan Spreadsheet";
+                }
+            } catch (err) {
+                if (label) label.textContent = "Mode Aktif (Sinkronisasi Latar)";
+            } finally {
+                if (icon) icon.classList.remove('fa-spin');
+                renderArenaGrid();
+            }
+        }
+
+        function applyRemoteBoxes(remoteBoxes) {
+            remoteBoxes.forEach(rb => {
+                const id = Number(rb.boxId);
+                if (id >= 1 && id <= TOTAL_BOXES) {
+                    state.boxRegistry[id] = {
+                        boxId: id,
+                        status: rb.status || 'OPEN',
+                        owner: rb.owner || '',
+                        lastTriedBy: rb.lastTriedBy || ''
+                    };
+                }
+            });
+        }
+
+        async function sendBoxResultToGAS(boxId, isCorrect, points, timeSpent) {
+            const payload = {
+                action: 'submitBox',
+                nama: state.user,
+                materi: 'TP 11, 12 & 13 (Operasi Bentuk Aljabar)',
+                boxId: boxId,
+                isCorrect: isCorrect,
+                points: points,
+                skor: state.score,
+                waktuPengerjaan: state.totalTimeSpent,
+                waktu_sisa_detik: Math.max(0, 3600 - state.totalTimeSpent),
+                boxesPicked: state.myPickedBoxes.length,
+                detail_jawaban: state.myPickedBoxes
+            };
+
+            try {
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                // Fallback no-cors jika deployment GAS lama
+                fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                }).catch(() => {});
+            }
+        }
+
+        function showFinalResultScreen() {
+            document.getElementById('arena-screen').classList.add('hidden');
+            document.getElementById('arena-screen').classList.remove('flex');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const solvedCount = state.myPickedBoxes.filter(b => b.correct).length;
+            document.getElementById('final-score').textContent = state.score;
+            document.getElementById('final-solved').textContent = `${solvedCount}/${MAX_BOX_PER_STUDENT}`;
+
+            const m = Math.floor(state.totalTimeSpent / 60).toString().padStart(2, '0');
+            const s = (state.totalTimeSpent % 60).toString().padStart(2, '0');
+            document.getElementById('final-time').textContent = `${m}m ${s}s`;
+
+            document.getElementById('status-saving').classList.remove('hidden');
+            document.getElementById('status-success').classList.add('hidden');
+
+            setTimeout(() => {
+                document.getElementById('status-saving').classList.add('hidden');
+                document.getElementById('status-success').classList.remove('hidden');
+            }, 900);
+        }
+
+        function returnToArenaView() {
+            document.getElementById('result-screen').classList.add('hidden');
+            const arena = document.getElementById('arena-screen');
+            arena.classList.remove('hidden');
+            arena.classList.add('flex');
+            syncArenaBoxes(true);
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
